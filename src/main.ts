@@ -1,11 +1,12 @@
 import Phaser from 'phaser'
 
 import Game from './scenes/Game'
+import { Constants } from './utils/Constants'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: Constants.WINDOW_WIDTH,
+  height: Constants.WINDOW_HEIGHT,
   parent: 'phaser',
   physics: {
     default: 'arcade',
@@ -19,7 +20,6 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   pixelArt: true,
   scale: {
-    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
   scene: [Game],
