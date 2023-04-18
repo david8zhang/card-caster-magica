@@ -23,6 +23,7 @@ export abstract class SpellCard {
   public spellTimelineRect!: Phaser.GameObjects.Rectangle
   public spellCardRect!: Phaser.GameObjects.Rectangle
   public wasPlayed: boolean = false
+  public wizardRef: Wizard | null = null
 
   constructor(game: Game, config: SpellCardConfig) {
     this.game = game

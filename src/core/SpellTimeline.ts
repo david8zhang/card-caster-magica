@@ -1,12 +1,14 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './spells/SpellCard'
 import { Constants } from '~/utils/Constants'
+import { Wizard } from './Wizard'
 
 export interface SpellTimelineConfig {
   position: {
     x: number
     y: number
   }
+  wizard: Wizard
 }
 
 export class SpellTimeline {
@@ -19,9 +21,13 @@ export class SpellTimeline {
 
   private currSpellIndex: number = 0
   public rectangle: Phaser.GameObjects.Rectangle
+  public wizard: Wizard
+
+  public tickerLine: Phaser.GameObjects.Line
 
   constructor(game: Game, config: SpellTimelineConfig) {
     this.game = game
+    this.wizard = config.wizard
     this.rectangle = this.game.add
       .rectangle(
         config.position.x,
@@ -42,7 +48,19 @@ export class SpellTimeline {
       .on(Phaser.Input.Events.POINTER_DOWN, () => {
         this.game.player.playCard(this)
       })
-
+    this.tickerLine = this.game.add
+      .line(
+        0,
+        0,
+        this.rectangle.x,
+        this.rectangle.y + this.rectangle.displayHeight,
+        this.rectangle.x,
+        this.rectangle.y,
+        0xffffff
+      )
+      .setOrigin(0.5, 0)
+      .setLineWidth(1)
+    // .setVisible(false)
     this.setupTickMarks()
   }
 
@@ -91,7 +109,23 @@ export class SpellTimeline {
 
   public addSpellToSpellSequence(spellCard: SpellCard) {
     this.spellSequence.push(spellCard)
+    spellCard.wizardRef = this.wizard
     this.updateCardsInSpellSequence()
+  }
+
+  startTicker() {
+    const startX = this.tickerLine.x
+    this.tickerLine.setVisible(true)
+    const event = this.game.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.tickerLine.setPosition(this.tickerLine.x + 85, this.tickerLine.y)
+        if (event.getOverallProgress() == 1) {
+          this.tickerLine.setPosition(startX, this.tickerLine.y)
+        }
+      },
+      repeat: 10,
+    })
   }
 
   processNextSpell() {
@@ -108,6 +142,9 @@ export class SpellTimeline {
           })
         })
       })
+    } else {
+      this.currSpellIndex = 0
+      return
     }
   }
 }

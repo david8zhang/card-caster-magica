@@ -4,13 +4,13 @@ import { SpellTimeline } from './SpellTimeline'
 import { Constants } from '~/utils/Constants'
 import { SpellCard } from './spells/SpellCard'
 import { FireballCard } from './spells/FireballCard'
+import { Button } from '~/ui/Button'
 
 export class Player {
   private game: Game
   private wizards: Wizard[] = []
-  private wizardToTimelineMapping: {
-    [key: string]: SpellTimeline
-  } = {}
+  private spellTimelines: SpellTimeline[] = []
+
   private currentHand: SpellCard[] = []
   public static NUM_CARDS_IN_HAND = 5
   private cardToPlay: SpellCard | null = null
@@ -19,6 +19,30 @@ export class Player {
     this.game = game
     this.createWizards()
     this.drawCards()
+    this.createStartButton()
+  }
+
+  createStartButton() {
+    new Button({
+      x: Constants.WINDOW_WIDTH - 100,
+      y: Constants.WINDOW_HEIGHT - 35,
+      width: 175,
+      height: 50,
+      text: 'Start Sequences',
+      onClick: () => {
+        this.startSequences()
+      },
+      scene: this.game,
+      backgroundColor: 0x222222,
+      textColor: 'white',
+    })
+  }
+
+  startSequences() {
+    this.spellTimelines.forEach((timeline) => {
+      timeline.startTicker()
+      timeline.processNextSpell()
+    })
   }
 
   createWizards() {
@@ -32,13 +56,14 @@ export class Player {
           x: 100,
           y: spellTimelineStartY,
         },
+        wizard,
       })
+      this.spellTimelines.push(timeline)
       this.game.add.text(10, spellTimelineStartY + timeline.rectangle.height / 2, config.name, {
         fontSize: '12px',
         color: 'white',
       })
       spellTimelineStartY += 75
-      this.wizardToTimelineMapping[wizard.name] = timeline
     })
   }
 
@@ -76,6 +101,7 @@ export class Player {
       spellTimeline.addSpellToSpellSequence(this.cardToPlay)
       this.cardToPlay.onPlay()
       this.updateCardsInHand()
+      this.cardToPlay = null
     }
   }
 }

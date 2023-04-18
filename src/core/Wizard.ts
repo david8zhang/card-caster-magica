@@ -13,7 +13,7 @@ export interface WizardConfig {
 export class Wizard {
   public name: string
   private game: Game
-  private sprite: Phaser.GameObjects.Sprite
+  public sprite: Phaser.GameObjects.Sprite
 
   constructor(game: Game, config: WizardConfig) {
     this.game = game

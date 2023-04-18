@@ -20,4 +20,63 @@ export class FireballCard extends SpellCard {
         this.game.player.selectCardToPlay(this)
       })
   }
+
+  public windUp() {
+    if (this.wizardRef) {
+      // TODO: Replace this with an actual fireball charging animation
+      const text = this.game.add.text(
+        this.wizardRef.sprite.x,
+        this.wizardRef.sprite.y,
+        'Winding up!',
+        {
+          fontSize: '12px',
+          color: 'white',
+        }
+      )
+      this.game.tweens.add({
+        targets: [text],
+        duration: this.windUpDurationSec * 1000,
+        y: {
+          from: this.wizardRef.sprite.y,
+          to: this.wizardRef.sprite.y - 25,
+        },
+        alpha: {
+          from: 1,
+          to: 0,
+        },
+        onComplete: () => {
+          text.destroy()
+        },
+      })
+    }
+  }
+
+  public execute() {
+    if (this.wizardRef) {
+      const text = this.game.add.text(
+        this.wizardRef.sprite.x,
+        this.wizardRef.sprite.y,
+        'Executing',
+        {
+          fontSize: '12px',
+          color: 'white',
+        }
+      )
+      this.game.tweens.add({
+        targets: [text],
+        duration: this.windUpDurationSec * 1000,
+        y: {
+          from: this.wizardRef.sprite.y,
+          to: this.wizardRef.sprite.y - 25,
+        },
+        alpha: {
+          from: 1,
+          to: 0,
+        },
+        onComplete: () => {
+          text.destroy()
+        },
+      })
+    }
+  }
 }
