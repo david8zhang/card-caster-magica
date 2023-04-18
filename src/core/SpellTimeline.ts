@@ -1,6 +1,5 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './spells/SpellCard'
-import { Wizard } from './Wizard'
 import { Constants } from '~/utils/Constants'
 
 export interface SpellTimelineConfig {
@@ -33,7 +32,31 @@ export class SpellTimeline {
         0.5
       )
       .setOrigin(0)
+      .setInteractive()
+      .on(Phaser.Input.Events.POINTER_OVER, () => {
+        this.rectangle.setStrokeStyle(2, 0xffff00)
+      })
+      .on(Phaser.Input.Events.POINTER_OUT, () => {
+        this.rectangle.setStrokeStyle(0)
+      })
+      .on(Phaser.Input.Events.POINTER_DOWN, () => {
+        this.game.player.playCard(this)
+      })
+
     this.setupTickMarks()
+  }
+
+  canPlayCard(spellCard: SpellCard): boolean {
+    return (
+      this.durationOfCardsInSeq + spellCard.totalDurationSec <=
+      SpellTimeline.SPELL_TIMELINE_DURATION_SECONDS
+    )
+  }
+
+  public get durationOfCardsInSeq() {
+    return this.spellSequence.reduce((acc, curr) => {
+      return acc + curr.totalDurationSec
+    }, 0)
   }
 
   setupTickMarks() {
@@ -54,8 +77,21 @@ export class SpellTimeline {
     }
   }
 
+  updateCardsInSpellSequence() {
+    let startX = this.rectangle.x
+    this.spellSequence.forEach((card) => {
+      card.spellTimelineRect
+        .setPosition(startX, this.rectangle.y)
+        .setVisible(true)
+        .setDepth(this.rectangle.depth + 1)
+        .setOrigin(0)
+      startX += card.spellTimelineRect.displayWidth
+    })
+  }
+
   public addSpellToSpellSequence(spellCard: SpellCard) {
     this.spellSequence.push(spellCard)
+    this.updateCardsInSpellSequence()
   }
 
   processNextSpell() {

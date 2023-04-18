@@ -53,7 +53,29 @@ export class Player {
     }
   }
 
+  updateCardsInHand() {
+    const unplayedCards = this.currentHand.filter((card) => !card.wasPlayed)
+    let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * unplayedCards.length) / 2
+    for (let i = 0; i < unplayedCards.length; i++) {
+      const spellCard = unplayedCards[i]
+      spellCard.spellCardRect.setPosition(startX, Constants.WINDOW_HEIGHT - 75).setVisible(true)
+      startX += 85
+    }
+  }
+
   selectCardToPlay(spellCard: SpellCard) {
+    if (this.cardToPlay) {
+      this.cardToPlay.dehighlight()
+    }
     this.cardToPlay = spellCard
+    this.cardToPlay.highlight()
+  }
+
+  playCard(spellTimeline: SpellTimeline) {
+    if (this.cardToPlay && spellTimeline.canPlayCard(this.cardToPlay)) {
+      spellTimeline.addSpellToSpellSequence(this.cardToPlay)
+      this.cardToPlay.onPlay()
+      this.updateCardsInHand()
+    }
   }
 }
