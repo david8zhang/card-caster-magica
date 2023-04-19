@@ -7,13 +7,18 @@ import { FireballCard } from './spells/FireballCard'
 import { Button } from '~/ui/Button'
 
 export class Player {
+  public static NUM_CARDS_IN_HAND = 5
+
   private game: Game
-  private wizards: Wizard[] = []
+  public wizards: Wizard[] = []
   private spellTimelines: SpellTimeline[] = []
 
   private currentHand: SpellCard[] = []
-  public static NUM_CARDS_IN_HAND = 5
   private cardToPlay: SpellCard | null = null
+  private startSequenceButton!: Button
+
+  private hasTimelineFinishedBeenCalled: boolean = false
+  private isPlayingSequence: boolean = false
 
   constructor(game: Game) {
     this.game = game
@@ -23,7 +28,7 @@ export class Player {
   }
 
   createStartButton() {
-    new Button({
+    this.startSequenceButton = new Button({
       x: Constants.WINDOW_WIDTH - 100,
       y: Constants.WINDOW_HEIGHT - 35,
       width: 175,
@@ -39,6 +44,9 @@ export class Player {
   }
 
   startSequences() {
+    this.currentHand = []
+    this.startSequenceButton.setVisible(false)
+    this.isPlayingSequence = true
     this.spellTimelines.forEach((timeline) => {
       timeline.startTicker()
       timeline.processNextSpell()
@@ -59,6 +67,7 @@ export class Player {
         wizard,
       })
       this.spellTimelines.push(timeline)
+      this.wizards.push(wizard)
       this.game.add.text(10, spellTimelineStartY + timeline.rectangle.height / 2, config.name, {
         fontSize: '12px',
         color: 'white',
@@ -78,6 +87,20 @@ export class Player {
     }
   }
 
+  onTimelineFinished() {
+    if (!this.hasTimelineFinishedBeenCalled) {
+      this.hasTimelineFinishedBeenCalled = true
+      this.endTurn()
+    }
+  }
+
+  endTurn() {
+    this.spellTimelines.forEach((timeline) => {
+      timeline.clear()
+    })
+    this.game.switchTurn()
+  }
+
   updateCardsInHand() {
     const unplayedCards = this.currentHand.filter((card) => !card.wasPlayed)
     let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * unplayedCards.length) / 2
@@ -88,7 +111,17 @@ export class Player {
     }
   }
 
+  startTurn() {
+    this.isPlayingSequence = false
+    this.startSequenceButton.setVisible(true)
+    this.drawCards()
+  }
+
   selectCardToPlay(spellCard: SpellCard) {
+    if (this.isPlayingSequence) {
+      return
+    }
+
     if (this.cardToPlay) {
       this.cardToPlay.dehighlight()
     }
@@ -97,6 +130,9 @@ export class Player {
   }
 
   playCard(spellTimeline: SpellTimeline) {
+    if (this.isPlayingSequence) {
+      return
+    }
     if (this.cardToPlay && spellTimeline.canPlayCard(this.cardToPlay)) {
       spellTimeline.addSpellToSpellSequence(this.cardToPlay)
       this.cardToPlay.onPlay()

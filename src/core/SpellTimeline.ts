@@ -1,6 +1,6 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './spells/SpellCard'
-import { Constants } from '~/utils/Constants'
+import { Constants, Sides } from '~/utils/Constants'
 import { Wizard } from './Wizard'
 
 export interface SpellTimelineConfig {
@@ -40,7 +40,9 @@ export class SpellTimeline {
       .setOrigin(0)
       .setInteractive()
       .on(Phaser.Input.Events.POINTER_OVER, () => {
-        this.rectangle.setStrokeStyle(2, 0xffff00)
+        if (this.game.currTurn === Sides.PLAYER) {
+          this.rectangle.setStrokeStyle(2, 0xffff00)
+        }
       })
       .on(Phaser.Input.Events.POINTER_OUT, () => {
         this.rectangle.setStrokeStyle(0)
@@ -60,7 +62,6 @@ export class SpellTimeline {
       )
       .setOrigin(0.5, 0)
       .setLineWidth(1)
-    // .setVisible(false)
     this.setupTickMarks()
   }
 
@@ -121,11 +122,19 @@ export class SpellTimeline {
       callback: () => {
         this.tickerLine.setPosition(this.tickerLine.x + 85, this.tickerLine.y)
         if (event.getOverallProgress() == 1) {
+          this.game.player.onTimelineFinished()
           this.tickerLine.setPosition(startX, this.tickerLine.y)
         }
       },
       repeat: 10,
     })
+  }
+
+  clear() {
+    this.spellSequence.forEach((spellCard: SpellCard) => {
+      spellCard.destroy()
+    })
+    this.spellSequence = []
   }
 
   processNextSpell() {

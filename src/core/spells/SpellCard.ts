@@ -66,6 +66,11 @@ export abstract class SpellCard {
     return this.windUpDurationSec + this.executionDurationSec + this.aftermathDurationSec
   }
 
+  public destroy() {
+    this.spellCardRect.destroy()
+    this.spellTimelineRect.destroy()
+  }
+
   public windUp() {
     return
   }

@@ -2,6 +2,8 @@ import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
 
 export class FireballCard extends SpellCard {
+  public static DAMAGE = 10
+
   constructor(game: Game) {
     super(game, {
       windUpDurationSec: 2,
@@ -64,7 +66,7 @@ export class FireballCard extends SpellCard {
       )
       this.game.tweens.add({
         targets: [text],
-        duration: this.windUpDurationSec * 1000,
+        duration: this.executionDurationSec * 1000,
         y: {
           from: this.wizardRef.sprite.y,
           to: this.wizardRef.sprite.y - 25,
@@ -75,6 +77,7 @@ export class FireballCard extends SpellCard {
         },
         onComplete: () => {
           text.destroy()
+          this.game.monster.takeDamage(FireballCard.DAMAGE)
         },
       })
     }
