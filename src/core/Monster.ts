@@ -37,12 +37,12 @@ export class Monster {
     damageText.setPosition(this.sprite.x - damageText.displayWidth / 2, this.sprite.y)
     this.game.tweens.add({
       targets: [damageText],
-      y: '-=20',
+      y: '-=50',
       alpha: {
         from: 1,
         to: 0,
       },
-      duration: 500,
+      duration: 1000,
     })
   }
 

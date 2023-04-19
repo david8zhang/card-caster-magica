@@ -5,15 +5,19 @@ import { Constants } from '~/utils/Constants'
 import { SpellCard } from './spells/SpellCard'
 import { FireballCard } from './spells/FireballCard'
 import { Button } from '~/ui/Button'
+import { PoisonGasCard } from './spells/PoisonGasCard'
+import { SpellTypes } from '~/utils/SpellTypes'
 
 export class Player {
-  public static NUM_CARDS_IN_HAND = 5
+  public static NUM_CARDS_TO_DRAW = 3
 
   private game: Game
   public wizards: Wizard[] = []
   private spellTimelines: SpellTimeline[] = []
 
   private currentHand: SpellCard[] = []
+  private deck: SpellCard[] = []
+
   private cardToPlay: SpellCard | null = null
   private startSequenceButton!: Button
 
@@ -23,8 +27,17 @@ export class Player {
   constructor(game: Game) {
     this.game = game
     this.createWizards()
-    this.drawCards()
     this.createStartButton()
+    this.setupDeck()
+    this.drawCards()
+  }
+
+  setupDeck() {
+    const randomCardTypes = SpellTypes
+    for (let i = 0; i <= 15; i++) {
+      const SpellCardClass = randomCardTypes[Phaser.Math.Between(0, randomCardTypes.length - 1)]
+      this.deck.push(new SpellCardClass(this.game))
+    }
   }
 
   createStartButton() {
@@ -44,7 +57,6 @@ export class Player {
   }
 
   startSequences() {
-    this.currentHand = []
     this.startSequenceButton.setVisible(false)
     this.isPlayingSequence = true
     this.spellTimelines.forEach((timeline) => {
@@ -78,12 +90,14 @@ export class Player {
 
   drawCards() {
     let startX =
-      Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * Player.NUM_CARDS_IN_HAND) / 2
-    for (let i = 0; i < Player.NUM_CARDS_IN_HAND; i++) {
-      const spellCard = new FireballCard(this.game)
-      spellCard.spellCardRect.setPosition(startX, Constants.WINDOW_HEIGHT - 75).setVisible(true)
-      startX += 85
-      this.currentHand.push(spellCard)
+      Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * Player.NUM_CARDS_TO_DRAW) / 2
+    for (let i = 0; i < Player.NUM_CARDS_TO_DRAW; i++) {
+      const spellCard = this.deck.pop()
+      if (spellCard) {
+        spellCard.spellCardRect.setPosition(startX, Constants.WINDOW_HEIGHT - 75).setVisible(true)
+        startX += 85
+        this.currentHand.push(spellCard)
+      }
     }
   }
 
@@ -112,9 +126,11 @@ export class Player {
   }
 
   startTurn() {
+    this.hasTimelineFinishedBeenCalled = false
     this.isPlayingSequence = false
     this.startSequenceButton.setVisible(true)
     this.drawCards()
+    this.updateCardsInHand()
   }
 
   selectCardToPlay(spellCard: SpellCard) {

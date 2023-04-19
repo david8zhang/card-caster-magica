@@ -1,16 +1,16 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
 
-export class FireballCard extends SpellCard {
-  public static DAMAGE = 10
+export class PoisonGasCard extends SpellCard {
+  public static DAMAGE = 5
 
   constructor(game: Game) {
     super(game, {
-      windUpDurationSec: 2,
+      windUpDurationSec: 3,
       executionDurationSec: 1,
       aftermathDurationSec: 0,
-      name: 'Fireball',
-      cardColor: 0xff0000,
+      name: 'PoisonGas',
+      cardColor: 0x0bda51,
     })
   }
 
@@ -20,7 +20,7 @@ export class FireballCard extends SpellCard {
       const text = this.game.add.text(
         this.wizardRef.sprite.x,
         this.wizardRef.sprite.y - 20,
-        'Charging fireball...',
+        'Charging poison gas...',
         {
           fontSize: '12px',
           color: 'white',
@@ -37,7 +37,7 @@ export class FireballCard extends SpellCard {
       const text = this.game.add.text(
         this.wizardRef.sprite.x,
         this.wizardRef.sprite.y,
-        'Shooting fireball!',
+        'Spreading poison gas!',
         {
           fontSize: '12px',
           color: 'white',
@@ -56,7 +56,7 @@ export class FireballCard extends SpellCard {
         },
         onComplete: () => {
           text.destroy()
-          this.game.monster.takeDamage(FireballCard.DAMAGE)
+          this.game.monster.takeDamage(PoisonGasCard.DAMAGE)
         },
       })
     }
