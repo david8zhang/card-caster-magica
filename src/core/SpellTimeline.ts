@@ -117,16 +117,17 @@ export class SpellTimeline {
   startTicker() {
     const startX = this.tickerLine.x
     this.tickerLine.setVisible(true)
-    const event = this.game.time.addEvent({
-      delay: 1000,
-      callback: () => {
-        this.tickerLine.setPosition(this.tickerLine.x + 85, this.tickerLine.y)
-        if (event.getOverallProgress() == 1) {
-          this.game.player.onTimelineFinished()
-          this.tickerLine.setPosition(startX, this.tickerLine.y)
-        }
+    this.game.tweens.add({
+      targets: [this.tickerLine],
+      x: {
+        from: startX,
+        to: startX + this.rectangle.displayWidth,
       },
-      repeat: 10,
+      duration: 10000,
+      onComplete: () => {
+        this.tickerLine.setPosition(startX, this.tickerLine.y)
+        this.game.player.onTimelineFinished()
+      },
     })
   }
 
