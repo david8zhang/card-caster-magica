@@ -1,8 +1,8 @@
 import { WizardConfig } from '~/core/Wizard'
 
 export enum Sides {
-  PLAYER,
-  CPU,
+  PLAYER = 'Player',
+  CPU = 'CPU',
 }
 
 export class Constants {
