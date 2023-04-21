@@ -1,12 +1,19 @@
 import Game from '~/scenes/Game'
 import { UIValueBar } from '~/ui/UIValueBar'
 import { Constants } from '~/utils/Constants'
+import { StatusTypes } from './status/Status'
+import { NoneStatus } from './status/NoneStatus'
+import { StatusFactory } from './status/StatusFactory'
 
 export class Monster {
-  private game: Game
-  public sprite: Phaser.Physics.Arcade.Sprite
-  private healthBar: UIValueBar
   public static MAX_HEALTH = 1000
+
+  private game: Game
+  private healthBar: UIValueBar
+
+  public sprite: Phaser.Physics.Arcade.Sprite
+  public currStatusType: StatusTypes
+  public statusFactory: StatusFactory
 
   constructor(game: Game) {
     this.game = game
@@ -23,6 +30,8 @@ export class Monster {
       maxValue: Monster.MAX_HEALTH,
       borderWidth: 0,
     })
+    this.currStatusType = StatusTypes.NONE
+    this.statusFactory = new StatusFactory(this)
   }
 
   takeDamage(damage: number) {
@@ -68,5 +77,11 @@ export class Monster {
         this.game.switchTurn()
       },
     })
+  }
+
+  applyStatusEffects(incomingStatusType: StatusTypes) {
+    const currStatus = this.statusFactory.statusMapping[this.currStatusType]
+    const incomingStatus = this.statusFactory.statusMapping[incomingStatusType]
+    currStatus.reactToIncomingStatus(incomingStatus)
   }
 }

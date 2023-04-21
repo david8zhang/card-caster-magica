@@ -9,9 +9,15 @@ export default class Game extends Phaser.Scene {
   public currTurn: Sides = Sides.PLAYER
   public overlayRect!: Phaser.GameObjects.Rectangle
   public overlayText!: Phaser.GameObjects.Text
+  private static _instance: Game
 
   constructor() {
     super('game')
+    Game._instance = this
+  }
+
+  public static get instance() {
+    return this._instance
   }
 
   create() {
@@ -52,7 +58,7 @@ export default class Game extends Phaser.Scene {
         from: 0,
         to: 0.5,
       },
-      duration: 1500,
+      duration: 1000,
       hold: 1000,
       yoyo: true,
       onComplete: () => {
