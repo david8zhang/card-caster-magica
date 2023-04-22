@@ -10,17 +10,14 @@ export class Player {
   public static NUM_CARDS_TO_DRAW = 5
 
   private game: Game
-  public wizards: Wizard[] = []
-  private spellTimelines: SpellTimeline[] = []
-
   private currentHand: SpellCard[] = []
   private deck: SpellCard[] = []
-
-  private cardToPlay: SpellCard | null = null
   private startSequenceButton!: Button
-
   private hasTimelineFinishedBeenCalled: boolean = false
   private isPlayingSequence: boolean = false
+
+  public spellTimelines: SpellTimeline[] = []
+  public wizards: Wizard[] = []
 
   constructor(game: Game) {
     this.game = game
@@ -82,7 +79,7 @@ export class Player {
         fontSize: '12px',
         color: 'white',
       })
-      spellTimelineStartY += 75
+      spellTimelineStartY += 70
     })
   }
 
@@ -92,7 +89,8 @@ export class Player {
     for (let i = 0; i < Player.NUM_CARDS_TO_DRAW; i++) {
       const spellCard = this.deck.pop()
       if (spellCard) {
-        spellCard.spellCardRect.setPosition(startX, Constants.WINDOW_HEIGHT - 75).setVisible(true)
+        spellCard.spellCardRect.setVisible(true)
+        spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 75)
         startX += 85
         this.currentHand.push(spellCard)
       }
@@ -118,7 +116,8 @@ export class Player {
     let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * unplayedCards.length) / 2
     for (let i = 0; i < unplayedCards.length; i++) {
       const spellCard = unplayedCards[i]
-      spellCard.spellCardRect.setPosition(startX, Constants.WINDOW_HEIGHT - 75).setVisible(true)
+      spellCard.spellCardRect.setVisible(true)
+      spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 75)
       startX += 85
     }
   }
@@ -131,27 +130,14 @@ export class Player {
     this.updateCardsInHand()
   }
 
-  selectCardToPlay(spellCard: SpellCard) {
+  playCard(spellTimeline: SpellTimeline, spellCardToPlay: SpellCard) {
     if (this.isPlayingSequence) {
       return
     }
-
-    if (this.cardToPlay) {
-      this.cardToPlay.dehighlight()
-    }
-    this.cardToPlay = spellCard
-    this.cardToPlay.highlight()
-  }
-
-  playCard(spellTimeline: SpellTimeline) {
-    if (this.isPlayingSequence) {
-      return
-    }
-    if (this.cardToPlay && spellTimeline.canPlayCard(this.cardToPlay)) {
-      spellTimeline.addSpellToSpellSequence(this.cardToPlay)
-      this.cardToPlay.onPlay()
+    if (spellCardToPlay && spellTimeline.canPlayCard(spellCardToPlay)) {
+      spellTimeline.addSpellToSpellSequence(spellCardToPlay)
+      spellCardToPlay.onPlay()
       this.updateCardsInHand()
-      this.cardToPlay = null
     }
   }
 }

@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { Monster } from '~/core/Monster'
 import { Player } from '~/core/Player'
+import { SpellCard } from '~/core/spells/SpellCard'
 import { Constants, Sides } from '~/utils/Constants'
 
 export default class Game extends Phaser.Scene {
@@ -27,6 +28,19 @@ export default class Game extends Phaser.Scene {
     this.player = new Player(this)
     this.monster = new Monster(this)
     this.setupOverlayRect()
+    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+      const spellCard = gameObject.getData('ref') as SpellCard
+      if (spellCard) {
+        spellCard.handleDrag(dragX, dragY)
+      }
+    })
+
+    this.input.on('dragend', (pointer, gameObject) => {
+      const spellCard = gameObject.getData('ref') as SpellCard
+      if (spellCard) {
+        spellCard.handleDragEnd()
+      }
+    })
   }
 
   setupOverlayRect() {

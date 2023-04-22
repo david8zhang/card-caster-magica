@@ -25,8 +25,9 @@ export abstract class SpellCard {
   public spellCardRect!: Phaser.GameObjects.Rectangle
   public wasPlayed: boolean = false
   public wizardRef: Wizard | null = null
-
   public cardColor: number
+  public spellTimelineToDropOn: SpellTimeline | null = null
+  public preDragPosition: { x: number; y: number } | null = null
 
   constructor(game: Game, config: SpellCardConfig) {
     this.game = game
@@ -55,10 +56,13 @@ export abstract class SpellCard {
     this.spellCardRect = this.game.add
       .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, this.cardColor)
       .setVisible(false)
-      .setInteractive()
-      .on('pointerdown', () => {
-        this.game.player.selectCardToPlay(this)
-      })
+      .setInteractive({ draggable: true })
+    this.spellCardRect.setData('ref', this)
+  }
+
+  public setCardPosition(x: number, y: number) {
+    this.preDragPosition = { x, y }
+    this.spellCardRect.setPosition(x, y)
   }
 
   public onPlay() {
@@ -72,6 +76,40 @@ export abstract class SpellCard {
 
   public dehighlight(): void {
     this.spellCardRect.setStrokeStyle(0)
+  }
+
+  public handleDrag(dragX: number, dragY: number) {
+    this.spellCardRect.setPosition(dragX, dragY)
+    const spellTimelines = this.game.player.spellTimelines
+    let newSpellTimeline: SpellTimeline | null = null
+    spellTimelines.forEach((spellTimeline: SpellTimeline) => {
+      if (spellTimeline.detectorRect.contains(dragX, dragY)) {
+        spellTimeline.highlightRect()
+        spellTimeline.previewCardDrop(this)
+        newSpellTimeline = spellTimeline
+      } else {
+        spellTimeline.dehighlightRect()
+      }
+    })
+
+    if (newSpellTimeline === null) {
+      this.spellTimelineRect.setVisible(false)
+      this.spellCardRect.setVisible(true)
+    }
+
+    this.spellTimelineToDropOn = newSpellTimeline
+  }
+
+  public handleDragEnd() {
+    if (this.spellTimelineToDropOn) {
+      this.game.player.playCard(this.spellTimelineToDropOn, this)
+    } else {
+      this.spellCardRect.setVisible(true)
+      this.spellTimelineRect.setVisible(false)
+      if (this.preDragPosition) {
+        this.spellCardRect.setPosition(this.preDragPosition.x, this.preDragPosition.y)
+      }
+    }
   }
 
   public get totalDurationSec() {
