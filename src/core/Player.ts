@@ -3,13 +3,11 @@ import { Wizard } from './Wizard'
 import { SpellTimeline } from './SpellTimeline'
 import { Constants } from '~/utils/Constants'
 import { SpellCard } from './spells/SpellCard'
-import { FireballCard } from './spells/FireballCard'
 import { Button } from '~/ui/Button'
-import { PoisonGasCard } from './spells/PoisonGasCard'
 import { SpellTypes } from '~/utils/SpellTypes'
 
 export class Player {
-  public static NUM_CARDS_TO_DRAW = 3
+  public static NUM_CARDS_TO_DRAW = 5
 
   private game: Game
   public wizards: Wizard[] = []

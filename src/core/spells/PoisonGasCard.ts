@@ -1,8 +1,9 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
+import { StatusTypes } from '../status/Status'
 
 export class PoisonGasCard extends SpellCard {
-  public static DAMAGE = 5
+  public static DAMAGE = 10
 
   constructor(game: Game) {
     super(game, {
@@ -57,6 +58,7 @@ export class PoisonGasCard extends SpellCard {
         onComplete: () => {
           text.destroy()
           this.game.monster.takeDamage(PoisonGasCard.DAMAGE)
+          this.game.monster.applyStatusEffects(StatusTypes.POISONED)
         },
       })
     }

@@ -1,5 +1,6 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
+import { StatusTypes } from '../status/Status'
 
 export class WaterBlastCard extends SpellCard {
   public static DAMAGE = 5
@@ -8,7 +9,7 @@ export class WaterBlastCard extends SpellCard {
     super(game, {
       name: 'Water Blast',
       windUpDurationSec: 1,
-      executionDurationSec: 2,
+      executionDurationSec: 1,
       aftermathDurationSec: 0,
       cardColor: 0x0000ff,
     })
@@ -57,6 +58,7 @@ export class WaterBlastCard extends SpellCard {
         onComplete: () => {
           text.destroy()
           this.game.monster.takeDamage(WaterBlastCard.DAMAGE)
+          this.game.monster.applyStatusEffects(StatusTypes.WET)
         },
       })
     }

@@ -1,12 +1,13 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
+import { StatusTypes } from '../status/Status'
 
 export class FireballCard extends SpellCard {
   public static DAMAGE = 10
 
   constructor(game: Game) {
     super(game, {
-      windUpDurationSec: 2,
+      windUpDurationSec: 1,
       executionDurationSec: 1,
       aftermathDurationSec: 0,
       name: 'Fireball',
@@ -57,6 +58,7 @@ export class FireballCard extends SpellCard {
         onComplete: () => {
           text.destroy()
           this.game.monster.takeDamage(FireballCard.DAMAGE)
+          this.game.monster.applyStatusEffects(StatusTypes.IGNITED)
         },
       })
     }

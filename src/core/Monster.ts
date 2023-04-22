@@ -2,7 +2,6 @@ import Game from '~/scenes/Game'
 import { UIValueBar } from '~/ui/UIValueBar'
 import { Constants } from '~/utils/Constants'
 import { StatusTypes } from './status/Status'
-import { NoneStatus } from './status/NoneStatus'
 import { StatusFactory } from './status/StatusFactory'
 
 export class Monster {
@@ -14,6 +13,8 @@ export class Monster {
   public sprite: Phaser.Physics.Arcade.Sprite
   public currStatusType: StatusTypes
   public statusFactory: StatusFactory
+
+  public currStatusIndicatorCircle: Phaser.GameObjects.Arc
 
   constructor(game: Game) {
     this.game = game
@@ -32,6 +33,9 @@ export class Monster {
     })
     this.currStatusType = StatusTypes.NONE
     this.statusFactory = new StatusFactory(this)
+    this.currStatusIndicatorCircle = this.game.add
+      .circle(this.sprite.x + 25, this.sprite.y - 25, 5)
+      .setVisible(false)
   }
 
   takeDamage(damage: number) {
@@ -56,6 +60,7 @@ export class Monster {
   }
 
   startTurn() {
+    this.clearStatus()
     this.attackPlayerWizards()
   }
 
@@ -80,8 +85,23 @@ export class Monster {
   }
 
   applyStatusEffects(incomingStatusType: StatusTypes) {
-    const currStatus = this.statusFactory.statusMapping[this.currStatusType]
     const incomingStatus = this.statusFactory.statusMapping[incomingStatusType]
-    currStatus.reactToIncomingStatus(incomingStatus)
+    this.currStatus.reactToIncomingStatus(incomingStatus)
+  }
+
+  setCurrStatus(statusType: StatusTypes) {
+    this.currStatus.clear()
+    this.currStatusType = statusType
+    this.currStatus.start()
+  }
+
+  public get currStatus() {
+    return this.statusFactory.statusMapping[this.currStatusType]
+  }
+
+  clearStatus() {
+    this.currStatus.clear()
+    this.currStatusType = StatusTypes.NONE
+    this.currStatusIndicatorCircle.setVisible(false)
   }
 }

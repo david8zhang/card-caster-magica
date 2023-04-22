@@ -1,5 +1,6 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
+import { StatusTypes } from '../status/Status'
 
 export class FrostWindCard extends SpellCard {
   public static DAMAGE = 15
@@ -57,6 +58,7 @@ export class FrostWindCard extends SpellCard {
         onComplete: () => {
           text.destroy()
           this.game.monster.takeDamage(FrostWindCard.DAMAGE)
+          this.game.monster.applyStatusEffects(StatusTypes.CHILLED)
         },
       })
     }

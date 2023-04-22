@@ -1,8 +1,10 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
+import { Status, StatusTypes } from '../status/Status'
+import { Reactions } from '~/utils/Reactions'
 
 export class RockThrowCard extends SpellCard {
-  public static DAMAGE = 5
+  public static DAMAGE = 25
 
   constructor(game: Game) {
     super(game, {
@@ -57,6 +59,9 @@ export class RockThrowCard extends SpellCard {
         onComplete: () => {
           text.destroy()
           this.game.monster.takeDamage(RockThrowCard.DAMAGE)
+          if (this.game.monster.currStatusType === StatusTypes.FROZEN) {
+            this.game.monster.takeDamage(Reactions.SHATTER_DAMAGE)
+          }
         },
       })
     }
