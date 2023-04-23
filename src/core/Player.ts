@@ -14,7 +14,7 @@ export class Player {
   private deck: SpellCard[] = []
   private startSequenceButton!: Button
   private hasTimelineFinishedBeenCalled: boolean = false
-  private isPlayingSequence: boolean = false
+  public isPlayingSequence: boolean = false
 
   public spellTimelines: SpellTimeline[] = []
   public wizards: Wizard[] = []
@@ -56,7 +56,7 @@ export class Player {
     this.isPlayingSequence = true
     this.spellTimelines.forEach((timeline) => {
       timeline.startTicker()
-      timeline.processNextSpell()
+      timeline.orchestrateSpellSequence()
     })
   }
 
@@ -134,10 +134,8 @@ export class Player {
     if (this.isPlayingSequence) {
       return
     }
-    if (spellCardToPlay && spellTimeline.canPlayCard(spellCardToPlay)) {
-      spellTimeline.addSpellToSpellSequence(spellCardToPlay)
-      spellCardToPlay.onPlay()
-      this.updateCardsInHand()
-    }
+    spellTimeline.addSpellToSpellSequence(spellCardToPlay)
+    spellCardToPlay.onPlay()
+    this.updateCardsInHand()
   }
 }

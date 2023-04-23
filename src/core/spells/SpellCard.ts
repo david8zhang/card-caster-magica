@@ -101,7 +101,11 @@ export abstract class SpellCard {
   }
 
   public handleDragEnd() {
-    if (this.spellTimelineToDropOn) {
+    if (
+      this.spellTimelineToDropOn &&
+      !this.game.player.isPlayingSequence &&
+      this.spellTimelineToDropOn.canPlayCard(this)
+    ) {
       this.game.player.playCard(this.spellTimelineToDropOn, this)
     } else {
       this.spellCardRect.setVisible(true)

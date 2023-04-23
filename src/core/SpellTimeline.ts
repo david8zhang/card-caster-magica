@@ -179,23 +179,23 @@ export class SpellTimeline {
     this.spellSequenceMapping = {}
   }
 
+  executeSpell(spell: SpellCard) {
+    spell.windUp()
+    this.game.time.delayedCall(spell.windUpDurationSec * 1000, () => {
+      spell.execute()
+      this.game.time.delayedCall(spell.executionDurationSec * 1000, () => {
+        spell.aftermath()
+      })
+    })
+  }
+
   orchestrateSpellSequence() {
-    // const currSpell = this.spellSequence[this.currSpellIndex]
-    // if (currSpell) {
-    //   currSpell.windUp()
-    //   this.game.time.delayedCall(currSpell.windUpDurationSec * 1000, () => {
-    //     currSpell.execute()
-    //     this.game.time.delayedCall(currSpell.executionDurationSec * 1000, () => {
-    //       currSpell.aftermath()
-    //       this.game.time.delayedCall(currSpell.aftermathDurationSec * 1000, () => {
-    //         this.currSpellIndex++
-    //         this.processNextSpell()
-    //       })
-    //     })
-    //   })
-    // } else {
-    //   this.currSpellIndex = 0
-    //   return
-    // }
+    Object.keys(this.spellSequenceMapping).forEach((key) => {
+      const tickerStartTime = parseInt(key)
+      const spell = this.spellSequenceMapping[key]
+      this.game.time.delayedCall(tickerStartTime * 1000, () => {
+        this.executeSpell(spell)
+      })
+    })
   }
 }

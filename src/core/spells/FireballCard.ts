@@ -7,7 +7,7 @@ export class FireballCard extends SpellCard {
 
   constructor(game: Game) {
     super(game, {
-      windUpDurationSec: 1,
+      windUpDurationSec: 2,
       executionDurationSec: 1,
       aftermathDurationSec: 0,
       name: 'Fireball',
