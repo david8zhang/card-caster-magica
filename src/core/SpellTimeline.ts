@@ -14,7 +14,7 @@ export interface SpellTimelineConfig {
 export class SpellTimeline {
   public static SPELL_TIMELINE_DURATION_SECONDS = 10
   private game: Game
-  private spellSequenceMapping: {
+  public spellSequenceMapping: {
     [key: string]: SpellCard
   } = {}
 
@@ -94,29 +94,30 @@ export class SpellTimeline {
     const startingTickMark = this.getTickMarkForRectPosition(spellCard)
     const startX = startingTickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
     spellCard.spellCardRect.setVisible(false)
-    spellCard.spellTimelineRect.setOrigin(0)
-    spellCard.spellTimelineRect.setPosition(startX, this.rectangle.y).setVisible(true).setAlpha(0.5)
+    spellCard.setTimelineRectPositions(startX, this.rectangle.y)
+
     if (!this.canPlayCard(spellCard)) {
-      spellCard.spellTimelineRect.setFillStyle(0xff0000)
+      spellCard.setTimelineRectFillStyle(0x888888, 0.5)
     } else {
-      spellCard.spellTimelineRect.setFillStyle(spellCard.cardColor)
+      spellCard.setTimelineRectFillStyle(spellCard.cardColor, 0.5)
     }
   }
 
   canPlayCard(spellCard: SpellCard) {
-    // Check for overlaps
     const startingTickMark = this.getTickMarkForRectPosition(spellCard)
     const startX = startingTickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
-    const endX = startX + spellCard.spellTimelineRect.displayWidth
-
+    const endX = startX + spellCard.spellTimelineRectWidth
     const keys = Object.keys(this.spellSequenceMapping)
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
       const spell = this.spellSequenceMapping[key]
       const tickMark = parseInt(key, 10)
       const spellStartX = tickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
-      const spellEndX = spellStartX + spell.spellTimelineRect.displayWidth
-      if ((startX >= spellStartX && startX < spellEndX) || endX < spellEndX) {
+      const spellEndX = spellStartX + spell.spellTimelineRectWidth
+      if (
+        (startX > spellStartX && startX < spellEndX) ||
+        (endX < spellEndX && endX > spellStartX)
+      ) {
         return false
       }
     }
@@ -128,22 +129,17 @@ export class SpellTimeline {
     const startingTickMark = this.getTickMarkForRectPosition(spellCard)
     this.spellSequenceMapping[startingTickMark.toString()] = spellCard
     const startX = startingTickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
-    spellCard.spellTimelineRect
-      .setPosition(startX, this.rectangle.y)
-      .setVisible(true)
-      .setOrigin(0)
-      .setAlpha(0.8)
+    spellCard.setTimelineRectPositions(startX, this.rectangle.y)
+    spellCard.setTimelineRectFillStyle(spellCard.cardColor, 1)
   }
 
   public getTickMarkForRectPosition(spellCard: SpellCard) {
-    const spellTimelineRect = spellCard.spellTimelineRect
     const spellCardRect = spellCard.spellCardRect
-    const startOfTimelineRectX = spellCardRect.x - spellTimelineRect.displayWidth / 2
-
+    const startOfTimelineRectX = spellCardRect.x - spellCard.spellTimelineRectWidth / 2
     let rightMostTick = 0
     for (let i = 1; i < SpellTimeline.SPELL_TIMELINE_DURATION_SECONDS; i++) {
       const tickMarkStartX = i * (this.rectangle.displayWidth / 10)
-      const endOfTimelineRectAtTick = tickMarkStartX + spellTimelineRect.displayWidth + 10
+      const endOfTimelineRectAtTick = tickMarkStartX + spellCard.spellTimelineRectWidth + 10
       if (
         endOfTimelineRectAtTick <= this.rectangle.x + this.rectangle.displayWidth &&
         startOfTimelineRectX >= tickMarkStartX
@@ -170,6 +166,10 @@ export class SpellTimeline {
         this.game.player.onTimelineFinished()
       },
     })
+  }
+
+  removeAllCards() {
+    this.spellSequenceMapping = {}
   }
 
   clear() {

@@ -21,7 +21,9 @@ export abstract class SpellCard {
 
   public name: string
 
-  public spellTimelineRect!: Phaser.GameObjects.Rectangle
+  public spellTimelineWindUpRect!: Phaser.GameObjects.Rectangle
+  public spellTimelineExecutionRect!: Phaser.GameObjects.Rectangle
+
   public spellCardRect!: Phaser.GameObjects.Rectangle
   public wasPlayed: boolean = false
   public wizardRef: Wizard | null = null
@@ -44,12 +46,42 @@ export abstract class SpellCard {
   public setupTimelineRect() {
     const totalDurationSec =
       this.windUpDurationSec + this.executionDurationSec + this.aftermathDurationSec
-    const spellCardTimelineRectWidth = totalDurationSec * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
-    this.spellTimelineRect = this.game.add
-      .rectangle(0, 0, spellCardTimelineRectWidth, SpellTimeline.SPELL_TIMELINE_HEIGHT - 20)
-      .setFillStyle(this.cardColor, 0.5)
+    const spellCardTimelineWindUpRectWidth =
+      this.windUpDurationSec * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
+    this.spellTimelineWindUpRect = this.game.add
+      .rectangle(0, 0, spellCardTimelineWindUpRectWidth, SpellTimeline.SPELL_TIMELINE_HEIGHT - 20)
+      .setFillStyle(this.cardColor, 0.4)
       .setStrokeStyle(2, 0x222222, 1)
       .setVisible(false)
+
+    const spellCardTimelineExecutionRectWidth =
+      this.executionDurationSec * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
+    this.spellTimelineExecutionRect = this.game.add
+      .rectangle(
+        0,
+        0,
+        spellCardTimelineExecutionRectWidth,
+        SpellTimeline.SPELL_TIMELINE_HEIGHT - 20
+      )
+      .setFillStyle(this.cardColor, 0.4)
+      .setStrokeStyle(2, 0x222222, 1)
+      .setVisible(false)
+  }
+
+  public setTimelineRectPositions(x: number, y: number) {
+    this.spellTimelineWindUpRect.setOrigin(0)
+    this.spellTimelineExecutionRect.setOrigin(0)
+
+    this.spellTimelineWindUpRect.setPosition(x, y).setVisible(true).setAlpha(0.4)
+    this.spellTimelineExecutionRect
+      .setPosition(x + this.spellTimelineWindUpRect.displayWidth, y)
+      .setVisible(true)
+      .setAlpha(0.5)
+  }
+
+  public hideTimelineRect() {
+    this.spellTimelineWindUpRect.setVisible(false)
+    this.spellTimelineExecutionRect.setVisible(false)
   }
 
   public setupCardRect(): void {
@@ -93,11 +125,18 @@ export abstract class SpellCard {
     })
 
     if (newSpellTimeline === null) {
-      this.spellTimelineRect.setVisible(false)
+      this.hideTimelineRect()
       this.spellCardRect.setVisible(true)
     }
 
     this.spellTimelineToDropOn = newSpellTimeline
+  }
+
+  public get spellTimelineRectWidth() {
+    return (
+      (this.windUpDurationSec + this.executionDurationSec + this.aftermathDurationSec) *
+      (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
+    )
   }
 
   public handleDragEnd() {
@@ -109,11 +148,16 @@ export abstract class SpellCard {
       this.game.player.playCard(this.spellTimelineToDropOn, this)
     } else {
       this.spellCardRect.setVisible(true)
-      this.spellTimelineRect.setVisible(false)
+      this.hideTimelineRect()
       if (this.preDragPosition) {
         this.spellCardRect.setPosition(this.preDragPosition.x, this.preDragPosition.y)
       }
     }
+  }
+
+  setTimelineRectFillStyle(color: number, alpha: number) {
+    this.spellTimelineWindUpRect.setFillStyle(color, alpha * 0.75)
+    this.spellTimelineExecutionRect.setFillStyle(color, alpha)
   }
 
   public get totalDurationSec() {
@@ -122,7 +166,8 @@ export abstract class SpellCard {
 
   public destroy() {
     this.spellCardRect.destroy()
-    this.spellTimelineRect.destroy()
+    this.spellTimelineWindUpRect.destroy()
+    this.spellTimelineExecutionRect.destroy()
   }
 
   public windUp() {

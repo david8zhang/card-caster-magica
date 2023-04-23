@@ -13,6 +13,8 @@ export class Player {
   private currentHand: SpellCard[] = []
   private deck: SpellCard[] = []
   private startSequenceButton!: Button
+  private resetSequenceButton!: Button
+
   private hasTimelineFinishedBeenCalled: boolean = false
   public isPlayingSequence: boolean = false
 
@@ -23,6 +25,7 @@ export class Player {
     this.game = game
     this.createWizards()
     this.createStartButton()
+    this.createResetButton()
     this.setupDeck()
     this.drawCards()
   }
@@ -49,6 +52,34 @@ export class Player {
       backgroundColor: 0x222222,
       textColor: 'white',
     })
+  }
+
+  createResetButton() {
+    this.resetSequenceButton = new Button({
+      x: Constants.WINDOW_WIDTH - 100,
+      y: Constants.WINDOW_HEIGHT - 90,
+      width: 175,
+      height: 50,
+      text: 'Reset Sequence',
+      onClick: () => {
+        this.resetSequences()
+      },
+      scene: this.game,
+      backgroundColor: 0x222222,
+      textColor: 'white',
+    })
+  }
+
+  resetSequences() {
+    this.spellTimelines.forEach((spellTimeline) => {
+      Object.keys(spellTimeline.spellSequenceMapping).forEach((key) => {
+        const spellCard = spellTimeline.spellSequenceMapping[key]
+        spellCard.wasPlayed = false
+        spellCard.hideTimelineRect()
+      })
+      spellTimeline.removeAllCards()
+    })
+    this.updateCardsInHand()
   }
 
   startSequences() {

@@ -7,10 +7,8 @@
 
 ## TODO:
 
-- Make spells drag and drop and adjustable across timeline
 - Make some UI improvements to show damage numbers more clearly
 - Add some text for status effects
-- Differentiate between different phases for spells in the timeline
 - Add tutorial
 - Improved art for wizard characters
 - Improved art for monster

@@ -11,7 +11,7 @@ export class RockThrowCard extends SpellCard {
       name: 'Rock Throw',
       windUpDurationSec: 2,
       executionDurationSec: 1,
-      aftermathDurationSec: 1,
+      aftermathDurationSec: 0,
       cardColor: 0x964b00,
     })
   }
