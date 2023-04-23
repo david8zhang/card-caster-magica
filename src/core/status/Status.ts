@@ -14,18 +14,23 @@ export interface StatusConfig {
   monster: Monster
   statusType: StatusTypes
   duration: number
+  iconColor?: number
 }
 
 export abstract class Status {
   protected monster: Monster
   public statusType: StatusTypes
   public duration: number
+  public iconColor: number | null = null
   protected expirationEvent!: Phaser.Time.TimerEvent
 
   constructor(config: StatusConfig) {
     this.monster = config.monster
     this.statusType = config.statusType
     this.duration = config.duration
+    if (config.iconColor) {
+      this.iconColor = config.iconColor
+    }
   }
 
   public reactToIncomingStatus(incomingStatus: Status) {

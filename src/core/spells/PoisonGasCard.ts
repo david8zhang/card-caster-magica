@@ -9,9 +9,9 @@ export class PoisonGasCard extends SpellCard {
     super(game, {
       windUpDurationSec: 3,
       executionDurationSec: 1,
-      aftermathDurationSec: 0,
       name: 'PoisonGas',
       cardColor: 0x0bda51,
+      statusEffect: StatusTypes.POISONED,
     })
   }
 

@@ -10,8 +10,8 @@ export class WaterBlastCard extends SpellCard {
       name: 'Water Blast',
       windUpDurationSec: 1,
       executionDurationSec: 1,
-      aftermathDurationSec: 0,
-      cardColor: 0x0000ff,
+      cardColor: 0x1434a4,
+      statusEffect: StatusTypes.WET,
     })
   }
 

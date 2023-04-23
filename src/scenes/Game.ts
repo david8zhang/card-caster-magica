@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { Monster } from '~/core/Monster'
 import { Player } from '~/core/Player'
 import { SpellCard } from '~/core/spells/SpellCard'
+import { StatusFactory } from '~/core/status/StatusFactory'
 import { Constants, Sides } from '~/utils/Constants'
 
 export default class Game extends Phaser.Scene {
@@ -10,6 +11,7 @@ export default class Game extends Phaser.Scene {
   public currTurn: Sides = Sides.PLAYER
   public overlayRect!: Phaser.GameObjects.Rectangle
   public overlayText!: Phaser.GameObjects.Text
+  public statusFactory!: StatusFactory
   private static _instance: Game
 
   constructor() {
@@ -25,8 +27,10 @@ export default class Game extends Phaser.Scene {
     const bgImage = this.add
       .rectangle(0, 0, Constants.MAP_WIDTH, Constants.MAP_HEIGHT, 0xc2b280)
       .setOrigin(0)
-    this.player = new Player(this)
     this.monster = new Monster(this)
+    this.statusFactory = new StatusFactory(this.monster)
+
+    this.player = new Player(this)
     this.setupOverlayRect()
     this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
       const spellCard = gameObject.getData('ref') as SpellCard

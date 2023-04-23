@@ -10,8 +10,8 @@ export class FrostWindCard extends SpellCard {
       name: 'Frost Wind',
       windUpDurationSec: 1,
       executionDurationSec: 2,
-      aftermathDurationSec: 0,
       cardColor: 0x33feff,
+      statusEffect: StatusTypes.CHILLED,
     })
   }
 

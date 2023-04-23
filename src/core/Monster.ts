@@ -12,33 +12,35 @@ export class Monster {
 
   public sprite: Phaser.Physics.Arcade.Sprite
   public currStatusType: StatusTypes
-  public statusFactory: StatusFactory
-
   public currStatusIndicatorCircle: Phaser.GameObjects.Arc
+  public damageNumQueue: number[] = []
 
   constructor(game: Game) {
     this.game = game
-    this.sprite = this.game.physics.add.sprite(
-      Constants.MAP_WIDTH - 150,
-      Constants.MAP_HEIGHT / 2,
-      ''
-    )
+    this.sprite = this.game.physics.add
+      .sprite(Constants.MAP_WIDTH - 150, Constants.MAP_HEIGHT / 2, 'cyclops')
+      .setScale(12)
+
+    const healthBarWidth = this.sprite.displayWidth + 25
+
     this.healthBar = new UIValueBar(this.game, {
-      x: this.sprite.x - 75,
-      y: this.sprite.y + 25,
-      width: 150,
-      height: 5,
+      x: this.sprite.x - healthBarWidth / 2,
+      y: this.sprite.y - (this.sprite.displayHeight / 2 + 25),
+      width: healthBarWidth,
+      height: 10,
       maxValue: Monster.MAX_HEALTH,
-      borderWidth: 0,
+      borderWidth: 2,
+      showBorder: true,
     })
     this.currStatusType = StatusTypes.NONE
-    this.statusFactory = new StatusFactory(this)
     this.currStatusIndicatorCircle = this.game.add
       .circle(this.sprite.x + 25, this.sprite.y - 25, 5)
       .setVisible(false)
   }
 
   takeDamage(damage: number) {
+    const y = this.sprite.y - 15 - this.damageNumQueue.length * 25
+    this.damageNumQueue.push(damage)
     const newHealth = Math.max(0, this.healthBar.currValue - damage)
     this.healthBar.setCurrValue(newHealth)
     const damageText = this.game.add
@@ -47,15 +49,20 @@ export class Monster {
         color: 'white',
       })
       .setDepth(Constants.SORT_LAYERS.UI)
-    damageText.setPosition(this.sprite.x - damageText.displayWidth / 2, this.sprite.y)
+    damageText.setPosition(this.sprite.x - damageText.displayWidth / 2, y)
     this.game.tweens.add({
       targets: [damageText],
-      y: '-=50',
+      y: '-=10',
       alpha: {
         from: 1,
         to: 0,
       },
       duration: 1000,
+      onStart: () => {
+        this.game.time.delayedCall(500, () => {
+          this.damageNumQueue.shift()
+        })
+      },
     })
   }
 
@@ -85,7 +92,7 @@ export class Monster {
   }
 
   applyStatusEffects(incomingStatusType: StatusTypes) {
-    const incomingStatus = this.statusFactory.statusMapping[incomingStatusType]
+    const incomingStatus = this.game.statusFactory.statusMapping[incomingStatusType]
     this.currStatus.reactToIncomingStatus(incomingStatus)
   }
 
@@ -96,7 +103,7 @@ export class Monster {
   }
 
   public get currStatus() {
-    return this.statusFactory.statusMapping[this.currStatusType]
+    return this.game.statusFactory.statusMapping[this.currStatusType]
   }
 
   clearStatus() {

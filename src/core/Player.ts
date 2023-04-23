@@ -26,16 +26,7 @@ export class Player {
     this.createWizards()
     this.createStartButton()
     this.createResetButton()
-    this.setupDeck()
     this.drawCards()
-  }
-
-  setupDeck() {
-    const randomCardTypes = SpellTypes
-    for (let i = 0; i <= 15; i++) {
-      const SpellCardClass = randomCardTypes[Phaser.Math.Between(0, randomCardTypes.length - 1)]
-      this.deck.push(new SpellCardClass(this.game))
-    }
   }
 
   createStartButton() {
@@ -117,8 +108,10 @@ export class Player {
   drawCards() {
     let startX =
       Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * Player.NUM_CARDS_TO_DRAW) / 2
+    const randomCardTypes = SpellTypes
     for (let i = 0; i < Player.NUM_CARDS_TO_DRAW; i++) {
-      const spellCard = this.deck.pop()
+      const SpellCardClass = randomCardTypes[Phaser.Math.Between(0, randomCardTypes.length - 1)]
+      const spellCard = new SpellCardClass(this.game)
       if (spellCard) {
         spellCard.spellCardRect.setVisible(true)
         spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 75)

@@ -22,14 +22,19 @@ export class Wizard {
   constructor(game: Game, config: WizardConfig) {
     this.game = game
     this.name = config.name
-    this.sprite = this.game.add.sprite(config.position.x, config.position.y, config.texture)
+    this.sprite = this.game.add
+      .sprite(config.position.x, config.position.y, config.texture)
+      .setScale(3)
+
+    const healthBarWidth = this.sprite.displayWidth * 2
     this.healthBar = new UIValueBar(game, {
-      x: this.sprite.x - 50,
-      y: this.sprite.y + 25,
-      width: 100,
+      x: this.sprite.x - healthBarWidth / 2,
+      y: this.sprite.y - (this.sprite.displayHeight / 2 + 15),
+      width: healthBarWidth,
       height: 5,
       maxValue: Wizard.MAX_HEALTH,
-      borderWidth: 0,
+      borderWidth: 2,
+      showBorder: true,
     })
   }
 

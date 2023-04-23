@@ -1,20 +1,21 @@
 import Game from '~/scenes/Game'
 import { Wizard } from '../Wizard'
 import { SpellTimeline } from '../SpellTimeline'
+import { Status, StatusTypes } from '../status/Status'
 
 export interface SpellCardConfig {
   name: string
   windUpDurationSec: number
   executionDurationSec: number
-  aftermathDurationSec: number
   cardColor: number
+  statusEffect?: StatusTypes
 }
 
 export abstract class SpellCard {
   protected game: Game
   public windUpDurationSec: number
   public executionDurationSec: number
-  public aftermathDurationSec: number
+  public statusEffect: StatusTypes | null = null
 
   public static SPELL_CARD_WIDTH = 75
   public static SPELL_CARD_HEIGHT = 125
@@ -23,6 +24,7 @@ export abstract class SpellCard {
 
   public spellTimelineWindUpRect!: Phaser.GameObjects.Rectangle
   public spellTimelineExecutionRect!: Phaser.GameObjects.Rectangle
+  public spellTimelineStatusEffectRect: Phaser.GameObjects.Rectangle | null = null
 
   public spellCardRect!: Phaser.GameObjects.Rectangle
   public wasPlayed: boolean = false
@@ -35,17 +37,16 @@ export abstract class SpellCard {
     this.game = game
     this.windUpDurationSec = config.windUpDurationSec
     this.executionDurationSec = config.executionDurationSec
-    this.aftermathDurationSec = config.aftermathDurationSec
     this.name = config.name
     this.cardColor = config.cardColor
-
+    if (config.statusEffect) {
+      this.statusEffect = config.statusEffect
+    }
     this.setupTimelineRect()
     this.setupCardRect()
   }
 
   public setupTimelineRect() {
-    const totalDurationSec =
-      this.windUpDurationSec + this.executionDurationSec + this.aftermathDurationSec
     const spellCardTimelineWindUpRectWidth =
       this.windUpDurationSec * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
     this.spellTimelineWindUpRect = this.game.add
@@ -66,22 +67,47 @@ export abstract class SpellCard {
       .setFillStyle(this.cardColor, 0.4)
       .setStrokeStyle(2, 0x222222, 1)
       .setVisible(false)
+
+    if (this.statusEffect) {
+      const statusEffectObj = this.game.statusFactory.statusMapping[this.statusEffect] as Status
+      const statusEffectRectWidth =
+        (statusEffectObj.duration / 1000) * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
+      this.spellTimelineStatusEffectRect = this.game.add
+        .rectangle(0, 0, statusEffectRectWidth, SpellTimeline.SPELL_TIMELINE_HEIGHT - 20)
+        .setFillStyle(statusEffectObj.iconColor || 0x000000, 0.4)
+        .setStrokeStyle(2, 0x22222, 1)
+        .setVisible(false)
+    }
   }
 
   public setTimelineRectPositions(x: number, y: number) {
     this.spellTimelineWindUpRect.setOrigin(0)
     this.spellTimelineExecutionRect.setOrigin(0)
-
+    if (this.spellTimelineStatusEffectRect) {
+      this.spellTimelineStatusEffectRect.setOrigin(0)
+    }
     this.spellTimelineWindUpRect.setPosition(x, y).setVisible(true).setAlpha(0.4)
     this.spellTimelineExecutionRect
       .setPosition(x + this.spellTimelineWindUpRect.displayWidth, y)
       .setVisible(true)
       .setAlpha(0.5)
+    if (this.spellTimelineStatusEffectRect) {
+      this.spellTimelineStatusEffectRect
+        .setPosition(
+          this.spellTimelineExecutionRect.x + this.spellTimelineExecutionRect.displayWidth,
+          y
+        )
+        .setVisible(true)
+        .setAlpha(0.5)
+    }
   }
 
   public hideTimelineRect() {
     this.spellTimelineWindUpRect.setVisible(false)
     this.spellTimelineExecutionRect.setVisible(false)
+    if (this.spellTimelineStatusEffectRect) {
+      this.spellTimelineStatusEffectRect.setVisible(false)
+    }
   }
 
   public setupCardRect(): void {
@@ -123,18 +149,16 @@ export abstract class SpellCard {
         spellTimeline.dehighlightRect()
       }
     })
-
     if (newSpellTimeline === null) {
       this.hideTimelineRect()
       this.spellCardRect.setVisible(true)
     }
-
     this.spellTimelineToDropOn = newSpellTimeline
   }
 
   public get spellTimelineRectWidth() {
     return (
-      (this.windUpDurationSec + this.executionDurationSec + this.aftermathDurationSec) *
+      (this.windUpDurationSec + this.executionDurationSec) *
       (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
     )
   }
@@ -158,16 +182,22 @@ export abstract class SpellCard {
   setTimelineRectFillStyle(color: number, alpha: number) {
     this.spellTimelineWindUpRect.setFillStyle(color, alpha * 0.75)
     this.spellTimelineExecutionRect.setFillStyle(color, alpha)
+    if (this.spellTimelineStatusEffectRect) {
+      this.spellTimelineStatusEffectRect.setAlpha(alpha * 0.25)
+    }
   }
 
   public get totalDurationSec() {
-    return this.windUpDurationSec + this.executionDurationSec + this.aftermathDurationSec
+    return this.windUpDurationSec + this.executionDurationSec
   }
 
   public destroy() {
     this.spellCardRect.destroy()
     this.spellTimelineWindUpRect.destroy()
     this.spellTimelineExecutionRect.destroy()
+    if (this.spellTimelineStatusEffectRect) {
+      this.spellTimelineStatusEffectRect.destroy()
+    }
   }
 
   public windUp() {

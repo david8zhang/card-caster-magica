@@ -11,7 +11,8 @@ export class PoisonedStatus extends Status {
     super({
       monster,
       statusType: StatusTypes.POISONED,
-      duration: 3000,
+      duration: 2000,
+      iconColor: 0x0bda51,
     })
   }
 
@@ -45,7 +46,7 @@ export class PoisonedStatus extends Status {
         this.monster.takeDamage(PoisonedStatus.POISON_DMG_OVER_TIME)
       },
     })
-    this.monster.currStatusIndicatorCircle.setFillStyle(0x0bda51).setVisible(true)
+    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
     super.start()
   }
 }

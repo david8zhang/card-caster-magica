@@ -7,6 +7,7 @@ export class ChilledStatus extends Status {
       statusType: StatusTypes.CHILLED,
       monster,
       duration: 1000,
+      iconColor: 0x33feff,
     })
   }
 
@@ -26,7 +27,7 @@ export class ChilledStatus extends Status {
   }
   public clear(): void {}
   public start(): void {
-    this.monster.currStatusIndicatorCircle.setFillStyle(0x33feff).setVisible(true)
+    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
     super.start()
   }
 }

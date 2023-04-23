@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 
 import Game from './scenes/Game'
 import { Constants } from './utils/Constants'
+import { Preload } from './scenes/Preload'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -22,7 +23,7 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [Game],
+  scene: [Preload, Game],
 }
 
 export default new Phaser.Game(config)

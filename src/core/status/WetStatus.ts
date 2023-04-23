@@ -7,6 +7,7 @@ export class WetStatus extends Status {
       monster,
       statusType: StatusTypes.WET,
       duration: 3000,
+      iconColor: 0x1434a4,
     })
   }
 
@@ -26,7 +27,7 @@ export class WetStatus extends Status {
   }
 
   public start(): void {
-    this.monster.currStatusIndicatorCircle.setFillStyle(0x0000ff).setVisible(true)
+    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
     super.start()
   }
 }

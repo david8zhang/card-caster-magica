@@ -44,7 +44,7 @@ export class SpellTimeline {
         config.position.y,
         SpellTimeline.SPELL_TIMELINE_WIDTH,
         SpellTimeline.SPELL_TIMELINE_HEIGHT,
-        0x555555,
+        0x777777,
         0.5
       )
       .setOrigin(0)

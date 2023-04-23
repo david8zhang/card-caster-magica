@@ -11,6 +11,7 @@ export class IgnitedStatus extends Status {
       monster,
       statusType: StatusTypes.IGNITED,
       duration: 1000,
+      iconColor: 0xffa500,
     })
   }
 
@@ -28,7 +29,7 @@ export class IgnitedStatus extends Status {
         this.monster.takeDamage(IgnitedStatus.BURN_DMG_OVER_TIME)
       },
     })
-    this.monster.currStatusIndicatorCircle.setFillStyle(0xff0000).setVisible(true)
+    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
     super.start()
   }
 }

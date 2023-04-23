@@ -9,9 +9,9 @@ export class FireballCard extends SpellCard {
     super(game, {
       windUpDurationSec: 2,
       executionDurationSec: 1,
-      aftermathDurationSec: 0,
       name: 'Fireball',
       cardColor: 0xff0000,
+      statusEffect: StatusTypes.IGNITED,
     })
   }
 

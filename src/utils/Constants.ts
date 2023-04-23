@@ -24,7 +24,7 @@ export class Constants {
         x: 100,
         y: Constants.MAP_HEIGHT / 2 - 50,
       },
-      texture: '',
+      texture: 'wizard',
       name: 'Wizard1',
     },
     {
@@ -32,7 +32,7 @@ export class Constants {
         x: 100,
         y: Constants.MAP_HEIGHT / 2 + 50,
       },
-      texture: '',
+      texture: 'wizard',
       name: 'Wizard2',
     },
   ]

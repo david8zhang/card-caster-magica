@@ -8,7 +8,7 @@
 ## TODO:
 
 - Make some UI improvements to show damage numbers more clearly
-- Add some text for status effects
+- Add rectangle to show status effect duration
 - Add tutorial
 - Improved art for wizard characters
 - Improved art for monster

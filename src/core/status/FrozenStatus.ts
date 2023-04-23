@@ -7,6 +7,7 @@ export class FrozenStatus extends Status {
       monster,
       statusType: StatusTypes.FROZEN,
       duration: 1000,
+      iconColor: 0xffffff,
     })
   }
 
@@ -22,7 +23,7 @@ export class FrozenStatus extends Status {
   public clear(): void {}
 
   public start(): void {
-    this.monster.currStatusIndicatorCircle.setFillStyle(0xffffff).setVisible(true)
+    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
     super.start()
   }
 }
