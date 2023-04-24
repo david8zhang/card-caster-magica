@@ -6,7 +6,7 @@ export class FrozenStatus extends Status {
     super({
       monster,
       statusType: StatusTypes.FROZEN,
-      duration: 1000,
+      duration: 2000,
       iconColor: 0xffffff,
     })
   }

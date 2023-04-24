@@ -3,7 +3,7 @@ import { SpellCard } from './SpellCard'
 import { StatusTypes } from '../status/Status'
 
 export class FrostWindCard extends SpellCard {
-  public static DAMAGE = 15
+  public static DAMAGE = 10
 
   constructor(game: Game) {
     super(game, {

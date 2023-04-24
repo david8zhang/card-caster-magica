@@ -13,6 +13,7 @@ export class WaterBlastCard extends SpellCard {
       cardColor: 0x1434a4,
       statusEffect: StatusTypes.WET,
     })
+    this.spellTimelineStatusEffectRect?.setStrokeStyle(2, 0x0000ff, 1).setAlpha(0.5)
   }
 
   public windUp() {

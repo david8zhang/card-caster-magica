@@ -32,6 +32,7 @@ export abstract class SpellCard {
   public cardColor: number
   public spellTimelineToDropOn: SpellTimeline | null = null
   public preDragPosition: { x: number; y: number } | null = null
+  public dragEndCallbacks: Function[] = []
 
   constructor(game: Game, config: SpellCardConfig) {
     this.game = game
@@ -52,7 +53,6 @@ export abstract class SpellCard {
     this.spellTimelineWindUpRect = this.game.add
       .rectangle(0, 0, spellCardTimelineWindUpRectWidth, SpellTimeline.SPELL_TIMELINE_HEIGHT - 20)
       .setFillStyle(this.cardColor, 0.4)
-      .setStrokeStyle(2, 0x222222, 1)
       .setVisible(false)
 
     const spellCardTimelineExecutionRectWidth =
@@ -65,7 +65,6 @@ export abstract class SpellCard {
         SpellTimeline.SPELL_TIMELINE_HEIGHT - 20
       )
       .setFillStyle(this.cardColor, 0.4)
-      .setStrokeStyle(2, 0x222222, 1)
       .setVisible(false)
 
     if (this.statusEffect) {
@@ -75,7 +74,6 @@ export abstract class SpellCard {
       this.spellTimelineStatusEffectRect = this.game.add
         .rectangle(0, 0, statusEffectRectWidth, SpellTimeline.SPELL_TIMELINE_HEIGHT - 20)
         .setFillStyle(statusEffectObj.iconColor || 0x000000, 0.4)
-        .setStrokeStyle(2, 0x22222, 1)
         .setVisible(false)
     }
   }
@@ -90,7 +88,6 @@ export abstract class SpellCard {
     this.spellTimelineExecutionRect
       .setPosition(x + this.spellTimelineWindUpRect.displayWidth, y)
       .setVisible(true)
-      .setAlpha(0.5)
     if (this.spellTimelineStatusEffectRect) {
       this.spellTimelineStatusEffectRect
         .setPosition(
@@ -98,7 +95,6 @@ export abstract class SpellCard {
           y
         )
         .setVisible(true)
-        .setAlpha(0.5)
     }
   }
 
@@ -141,7 +137,7 @@ export abstract class SpellCard {
     const spellTimelines = this.game.player.spellTimelines
     let newSpellTimeline: SpellTimeline | null = null
     spellTimelines.forEach((spellTimeline: SpellTimeline) => {
-      if (spellTimeline.detectorRect.contains(dragX, dragY)) {
+      if (spellTimeline.isActive && spellTimeline.detectorRect.contains(dragX, dragY)) {
         spellTimeline.highlightRect()
         spellTimeline.previewCardDrop(this)
         newSpellTimeline = spellTimeline
@@ -170,6 +166,9 @@ export abstract class SpellCard {
       this.spellTimelineToDropOn.canPlayCard(this)
     ) {
       this.game.player.playCard(this.spellTimelineToDropOn, this)
+      this.dragEndCallbacks.forEach((cb) => {
+        cb()
+      })
     } else {
       this.spellCardRect.setVisible(true)
       this.hideTimelineRect()

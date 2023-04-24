@@ -1,19 +1,28 @@
 import Game from '~/scenes/Game'
-import { Wizard } from './Wizard'
+import { Wizard, WizardConfig } from './Wizard'
 import { SpellTimeline } from './SpellTimeline'
 import { Constants } from '~/utils/Constants'
 import { SpellCard } from './spells/SpellCard'
 import { Button } from '~/ui/Button'
 import { SpellTypes } from '~/utils/SpellTypes'
+import { TutorialSpellCard } from './spells/TutorialSpellCard'
+import { FireballCard } from './spells/FireballCard'
+import { PoisonGasCard } from './spells/PoisonGasCard'
+import { WaterBlastCard } from './spells/WaterBlastCard'
+import { FrostWindCard } from './spells/FrostWindCard'
+import { RockThrowCard } from './spells/RockThrowCard'
+
+export interface PlayerConfig {
+  wizardConfig: WizardConfig[]
+}
 
 export class Player {
-  public static NUM_CARDS_TO_DRAW = 5
+  public static NUM_CARDS_TO_DRAW = 3
 
   private game: Game
   private currentHand: SpellCard[] = []
-  private deck: SpellCard[] = []
-  private startSequenceButton!: Button
-  private resetSequenceButton!: Button
+  public startSequenceButton!: Button
+  public resetSequenceButton!: Button
 
   private hasTimelineFinishedBeenCalled: boolean = false
   public isPlayingSequence: boolean = false
@@ -26,7 +35,6 @@ export class Player {
     this.createWizards()
     this.createStartButton()
     this.createResetButton()
-    this.drawCards()
   }
 
   createStartButton() {
@@ -77,8 +85,26 @@ export class Player {
     this.startSequenceButton.setVisible(false)
     this.isPlayingSequence = true
     this.spellTimelines.forEach((timeline) => {
-      timeline.startTicker()
-      timeline.orchestrateSpellSequence()
+      if (timeline.isActive) {
+        timeline.startTicker(() => {
+          this.onTimelineFinished()
+        })
+        timeline.orchestrateSpellSequence()
+      }
+    })
+  }
+
+  startSequencesTutorial(cb: Function) {
+    this.startSequenceButton.setVisible(false)
+    this.isPlayingSequence = true
+    this.spellTimelines.forEach((timeline) => {
+      timeline.dehighlightRect()
+      if (timeline.isActive) {
+        timeline.startTicker(() => {
+          cb()
+        })
+        timeline.orchestrateSpellSequence()
+      }
     })
   }
 
@@ -97,19 +123,14 @@ export class Player {
       })
       this.spellTimelines.push(timeline)
       this.wizards.push(wizard)
-      this.game.add.text(10, spellTimelineStartY + timeline.rectangle.height / 2, config.name, {
-        fontSize: '12px',
-        color: 'white',
-      })
       spellTimelineStartY += 70
     })
   }
 
-  drawCards() {
-    let startX =
-      Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * Player.NUM_CARDS_TO_DRAW) / 2
+  drawCards(numCardsToDraw: number = Player.NUM_CARDS_TO_DRAW) {
+    let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * numCardsToDraw) / 2
     const randomCardTypes = SpellTypes
-    for (let i = 0; i < Player.NUM_CARDS_TO_DRAW; i++) {
+    for (let i = 0; i < numCardsToDraw; i++) {
       const SpellCardClass = randomCardTypes[Phaser.Math.Between(0, randomCardTypes.length - 1)]
       const spellCard = new SpellCardClass(this.game)
       if (spellCard) {
@@ -119,6 +140,33 @@ export class Player {
         this.currentHand.push(spellCard)
       }
     }
+  }
+
+  drawCardForTutorial(cardType?: string) {
+    let startX = Constants.MAP_WIDTH / 2 - SpellCard.SPELL_CARD_WIDTH / 2
+    let SpellCardClass = TutorialSpellCard
+    if (cardType === 'Fireball') {
+      SpellCardClass = FireballCard
+    }
+    if (cardType === 'PoisonGas') {
+      SpellCardClass = PoisonGasCard
+    }
+    if (cardType === 'WaterBlast') {
+      SpellCardClass = WaterBlastCard
+    }
+    if (cardType === 'FrostWind') {
+      SpellCardClass = FrostWindCard
+    }
+    if (cardType === 'RockThrow') {
+      SpellCardClass = RockThrowCard
+    }
+    const spellCard = new SpellCardClass(this.game)
+    spellCard.spellCardRect.setVisible(true)
+    spellCard.spellCardRect.removeInteractive()
+    spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 75)
+    this.currentHand.push(spellCard)
+    this.updateCardsInHand()
+    return spellCard
   }
 
   onTimelineFinished() {

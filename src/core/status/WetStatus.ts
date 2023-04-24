@@ -6,7 +6,7 @@ export class WetStatus extends Status {
     super({
       monster,
       statusType: StatusTypes.WET,
-      duration: 3000,
+      duration: 4000,
       iconColor: 0x1434a4,
     })
   }

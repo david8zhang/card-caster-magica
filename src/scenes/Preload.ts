@@ -11,6 +11,6 @@ export class Preload extends Scene {
   }
 
   create() {
-    this.scene.start('game')
+    this.scene.start('main-menu')
   }
 }

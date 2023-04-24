@@ -38,6 +38,32 @@ export class Wizard {
     })
   }
 
+  recoverHealth(recoverAmt: number) {
+    const newHealth = Math.min(this.healthBar.maxValue, this.healthBar.currValue + recoverAmt)
+    this.healthBar.setCurrValue(newHealth)
+    const damageText = this.game.add
+      .text(this.sprite.x, this.sprite.y, `+${recoverAmt}`, {
+        fontSize: '20px',
+        color: 'white',
+      })
+      .setDepth(Constants.SORT_LAYERS.UI)
+    damageText.setPosition(this.sprite.x - damageText.displayWidth / 2, this.sprite.y)
+    this.game.tweens.add({
+      targets: [damageText],
+      y: '-=50',
+      alpha: {
+        from: 1,
+        to: 0,
+      },
+      duration: 1000,
+    })
+  }
+
+  setVisible(isVisible: boolean) {
+    this.sprite.setVisible(isVisible)
+    this.healthBar.setVisible(isVisible)
+  }
+
   takeDamage(damage: number) {
     const newHealth = Math.max(0, this.healthBar.currValue - damage)
     this.healthBar.setCurrValue(newHealth)

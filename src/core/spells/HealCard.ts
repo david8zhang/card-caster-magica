@@ -1,27 +1,25 @@
 import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
-import { StatusTypes } from '../status/Status'
 
-export class FireballCard extends SpellCard {
-  public static DAMAGE = 10
+export class HealCard extends SpellCard {
+  public static HEAL_AMOUNT = 10
 
   constructor(game: Game) {
     super(game, {
+      name: 'Heal',
       windUpDurationSec: 2,
-      executionDurationSec: 1,
-      name: 'Fireball',
-      cardColor: 0xffa500,
-      statusEffect: StatusTypes.IGNITED,
+      executionDurationSec: 2,
+      cardColor: 0xf8c8dc,
     })
   }
 
-  public windUp() {
+  public windUp(): void {
     if (this.wizardRef) {
       // TODO: Replace this with an actual fireball charging animation
       const text = this.game.add.text(
         this.wizardRef.sprite.x,
         this.wizardRef.sprite.y - 20,
-        'Charging fireball...',
+        'Charging heal...',
         {
           fontSize: '12px',
           color: 'white',
@@ -38,7 +36,7 @@ export class FireballCard extends SpellCard {
       const text = this.game.add.text(
         this.wizardRef.sprite.x,
         this.wizardRef.sprite.y,
-        'Shooting fireball!',
+        'Healing party!',
         {
           fontSize: '12px',
           color: 'white',
@@ -57,8 +55,9 @@ export class FireballCard extends SpellCard {
         },
         onComplete: () => {
           text.destroy()
-          this.game.monster.takeDamage(FireballCard.DAMAGE)
-          this.game.monster.applyStatusEffects(StatusTypes.IGNITED)
+          Game.instance.player.wizards.forEach((wizard) => {
+            wizard.recoverHealth(HealCard.HEAL_AMOUNT)
+          })
         },
       })
     }

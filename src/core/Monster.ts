@@ -2,10 +2,15 @@ import Game from '~/scenes/Game'
 import { UIValueBar } from '~/ui/UIValueBar'
 import { Constants } from '~/utils/Constants'
 import { StatusTypes } from './status/Status'
-import { StatusFactory } from './status/StatusFactory'
+
+export interface MonsterConfig {
+  texture: string
+  scale: number
+}
 
 export class Monster {
   public static MAX_HEALTH = 1000
+  public static DAMAGE = 15
 
   private game: Game
   private healthBar: UIValueBar
@@ -15,11 +20,17 @@ export class Monster {
   public currStatusIndicatorCircle: Phaser.GameObjects.Arc
   public damageNumQueue: number[] = []
 
-  constructor(game: Game) {
+  constructor(game: Game, config: MonsterConfig) {
     this.game = game
     this.sprite = this.game.physics.add
-      .sprite(Constants.MAP_WIDTH - 150, Constants.MAP_HEIGHT / 2, 'cyclops')
-      .setScale(12)
+      .sprite(Constants.MAP_WIDTH - 150, Constants.MAP_HEIGHT / 2, config.texture)
+      .setScale(config.scale)
+      .setFlipX(true)
+
+    this.sprite.setPosition(
+      Constants.MAP_WIDTH - this.sprite.displayWidth,
+      Constants.MAP_HEIGHT / 2
+    )
 
     const healthBarWidth = this.sprite.displayWidth + 25
 
@@ -38,8 +49,12 @@ export class Monster {
       .setVisible(false)
   }
 
+  get currHealth() {
+    return this.healthBar.currValue
+  }
+
   takeDamage(damage: number) {
-    const y = this.sprite.y - 15 - this.damageNumQueue.length * 25
+    const y = this.healthBar.y - this.damageNumQueue.length * 25
     this.damageNumQueue.push(damage)
     const newHealth = Math.max(0, this.healthBar.currValue - damage)
     this.healthBar.setCurrValue(newHealth)
@@ -84,7 +99,7 @@ export class Monster {
       duration: 500,
       onComplete: () => {
         this.game.player.wizards.forEach((wizard) => {
-          wizard.takeDamage(10)
+          wizard.takeDamage(Monster.DAMAGE)
         })
         this.game.switchTurn()
       },
@@ -94,6 +109,11 @@ export class Monster {
   applyStatusEffects(incomingStatusType: StatusTypes) {
     const incomingStatus = this.game.statusFactory.statusMapping[incomingStatusType]
     this.currStatus.reactToIncomingStatus(incomingStatus)
+  }
+
+  setMaxHealth(health: number) {
+    this.healthBar.setMaxValue(health)
+    this.healthBar.setCurrValue(health)
   }
 
   setCurrStatus(statusType: StatusTypes) {

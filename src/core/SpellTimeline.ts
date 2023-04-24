@@ -20,13 +20,13 @@ export class SpellTimeline {
 
   public static SPELL_TIMELINE_WIDTH = Constants.MAP_WIDTH - 110
   public static SPELL_TIMELINE_HEIGHT = 65
-
-  private currSpellIndex: number = 0
   public rectangle: Phaser.GameObjects.Rectangle
   public detectorRect: Phaser.Geom.Rectangle
   public wizard: Wizard
-
+  public wizardNameText: Phaser.GameObjects.Text
   public tickerLine: Phaser.GameObjects.Line
+  public isActive: boolean = true
+  public tickMarks: Phaser.GameObjects.Line[] = []
 
   constructor(game: Game, config: SpellTimelineConfig) {
     this.game = game
@@ -61,6 +61,16 @@ export class SpellTimeline {
       )
       .setOrigin(0.5, 0)
       .setLineWidth(1)
+
+    this.wizardNameText = this.game.add.text(
+      10,
+      this.rectangle.y + this.rectangle.height / 2,
+      this.wizard.name,
+      {
+        fontSize: '12px',
+        color: 'white',
+      }
+    )
     this.setupTickMarks()
   }
 
@@ -76,7 +86,7 @@ export class SpellTimeline {
     let x = this.rectangle.x
     for (let i = 0; i < 9; i++) {
       x += this.rectangle.displayWidth / 10
-      this.game.add
+      const line = this.game.add
         .line(
           0,
           0,
@@ -87,6 +97,7 @@ export class SpellTimeline {
           0xffffff
         )
         .setOrigin(0)
+      this.tickMarks.push(line)
     }
   }
 
@@ -103,6 +114,26 @@ export class SpellTimeline {
     }
   }
 
+  deactivate() {
+    this.isActive = false
+    this.wizardNameText.setVisible(false)
+    this.rectangle.setVisible(false)
+    this.tickerLine.setVisible(false)
+    this.tickMarks.forEach((line) => {
+      line.setVisible(false)
+    })
+  }
+
+  activate() {
+    this.isActive = true
+    this.wizardNameText.setVisible(true)
+    this.rectangle.setVisible(true)
+    this.tickerLine.setVisible(true)
+    this.tickMarks.forEach((line) => {
+      line.setVisible(true)
+    })
+  }
+
   canPlayCard(spellCard: SpellCard) {
     const startingTickMark = this.getTickMarkForRectPosition(spellCard)
     const startX = startingTickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
@@ -115,8 +146,8 @@ export class SpellTimeline {
       const spellStartX = tickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
       const spellEndX = spellStartX + spell.spellTimelineRectWidth
       if (
-        (startX > spellStartX && startX < spellEndX) ||
-        (endX < spellEndX && endX > spellStartX)
+        (startX >= spellStartX && startX < spellEndX) ||
+        (endX < spellEndX && endX >= spellStartX)
       ) {
         return false
       }
@@ -151,7 +182,7 @@ export class SpellTimeline {
     return rightMostTick
   }
 
-  startTicker() {
+  startTicker(onTimelineFinished?: Function) {
     const startX = this.tickerLine.x
     this.tickerLine.setVisible(true)
     this.game.tweens.add({
@@ -163,7 +194,9 @@ export class SpellTimeline {
       duration: 10000,
       onComplete: () => {
         this.tickerLine.setPosition(startX, this.tickerLine.y)
-        this.game.player.onTimelineFinished()
+        if (onTimelineFinished) {
+          onTimelineFinished()
+        }
       },
     })
   }
