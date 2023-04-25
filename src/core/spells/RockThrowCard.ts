@@ -2,9 +2,11 @@ import Game from '~/scenes/Game'
 import { SpellCard } from './SpellCard'
 import { Status, StatusTypes } from '../status/Status'
 import { Reactions } from '~/utils/Reactions'
+import { FrozenStatus } from '../status/FrozenStatus'
 
 export class RockThrowCard extends SpellCard {
-  public static DAMAGE = 25
+  public static DAMAGE = 15
+  public rockThrowSprite: Phaser.GameObjects.Sprite
 
   constructor(game: Game) {
     super(game, {
@@ -15,6 +17,7 @@ export class RockThrowCard extends SpellCard {
       imageSrc: 'rock-throw',
       descText: 'Throws a boulder and deals 25 damage',
     })
+    this.rockThrowSprite = this.game.add.sprite(0, 0, 'rockball').setVisible(false)
   }
 
   public windUp() {
@@ -37,33 +40,46 @@ export class RockThrowCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
-      const text = this.game.add.text(
+      this.rockThrowSprite.setPosition(
         this.wizardRef.sprite.x,
-        this.wizardRef.sprite.y,
-        'Throwing rock!',
-        {
-          fontSize: '12px',
-          color: 'white',
-        }
+        this.wizardRef.sprite.y - this.wizardRef.sprite.displayHeight / 2
       )
+      const angleTowardMonster = Phaser.Math.Angle.Between(
+        this.rockThrowSprite.x,
+        this.rockThrowSprite.y,
+        this.game.monster.sprite.x,
+        this.game.monster.sprite.y
+      )
+      this.rockThrowSprite.setAngle(angleTowardMonster).setVisible(true)
       this.game.tweens.add({
-        targets: [text],
-        duration: this.executionDurationSec * 1000,
+        targets: [this.rockThrowSprite],
+        x: {
+          from: this.rockThrowSprite.x,
+          to: this.game.monster.sprite.x,
+        },
         y: {
-          from: this.wizardRef.sprite.y,
-          to: this.wizardRef.sprite.y - 25,
+          from: this.rockThrowSprite.y,
+          to: this.game.monster.sprite.y,
         },
-        alpha: {
-          from: 1,
-          to: 0,
-        },
+        duration: 1000,
         onComplete: () => {
-          text.destroy()
-          this.game.monster.takeDamage(RockThrowCard.DAMAGE)
+          this.game.tweens.add({
+            targets: [this.game.monster.sprite],
+            x: '+=5',
+            yoyo: true,
+            duration: 50,
+            repeat: 3,
+          })
           if (this.game.monster.currStatusType === StatusTypes.FROZEN) {
-            this.game.shakeAfterReaction()
+            const frozenStatus = this.game.monster.currStatus as FrozenStatus
+            frozenStatus.shatter()
             this.game.monster.takeDamage(Reactions.SHATTER_DAMAGE)
           }
+          this.rockThrowSprite.play('rock-explosion-anim', true)
+          this.rockThrowSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.rockThrowSprite.setVisible(false)
+          })
+          this.game.monster.takeDamage(RockThrowCard.DAMAGE)
         },
       })
     }

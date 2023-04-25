@@ -1,0 +1,159 @@
+{
+  "frames": {
+    "1.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 387,
+        "h": 141
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 214,
+        "y": 179,
+        "w": 387,
+        "h": 141
+      },
+      "sourceSize": {
+        "w": 960,
+        "h": 481
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "2.png": {
+      "frame": {
+        "x": 0,
+        "y": 141,
+        "w": 259,
+        "h": 169
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 579,
+        "y": 215,
+        "w": 259,
+        "h": 169
+      },
+      "sourceSize": {
+        "w": 960,
+        "h": 481
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "4.png": {
+      "frame": {
+        "x": 0,
+        "y": 310,
+        "w": 238,
+        "h": 165
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 722,
+        "y": 189,
+        "w": 238,
+        "h": 165
+      },
+      "sourceSize": {
+        "w": 960,
+        "h": 481
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3.png": {
+      "frame": {
+        "x": 387,
+        "y": 0,
+        "w": 193,
+        "h": 180
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 678,
+        "y": 168,
+        "w": 193,
+        "h": 180
+      },
+      "sourceSize": {
+        "w": 960,
+        "h": 481
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "0.png": {
+      "frame": {
+        "x": 259,
+        "y": 141,
+        "w": 127,
+        "h": 148
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 130,
+        "y": 172,
+        "w": 127,
+        "h": 148
+      },
+      "sourceSize": {
+        "w": 960,
+        "h": 481
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "5.png": {
+      "frame": {
+        "x": 386,
+        "y": 180,
+        "w": 103,
+        "h": 63
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 857,
+        "y": 263,
+        "w": 103,
+        "h": 63
+      },
+      "sourceSize": {
+        "w": 960,
+        "h": 481
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.6",
+    "image": "frost-wind.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 580,
+      "h": 475
+    },
+    "scale": 1
+  }
+}

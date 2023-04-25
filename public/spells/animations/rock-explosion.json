@@ -1,0 +1,159 @@
+{
+  "frames": {
+    "5.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 80,
+        "h": 94
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 196,
+        "y": 188,
+        "w": 80,
+        "h": 94
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "4.png": {
+      "frame": {
+        "x": 80,
+        "y": 0,
+        "w": 73,
+        "h": 89
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 200,
+        "y": 189,
+        "w": 73,
+        "h": 89
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3.png": {
+      "frame": {
+        "x": 0,
+        "y": 94,
+        "w": 69,
+        "h": 81
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 203,
+        "y": 192,
+        "w": 69,
+        "h": 81
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "1.png": {
+      "frame": {
+        "x": 69,
+        "y": 94,
+        "w": 45,
+        "h": 55
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 215,
+        "y": 205,
+        "w": 45,
+        "h": 55
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "0.png": {
+      "frame": {
+        "x": 114,
+        "y": 89,
+        "w": 39,
+        "h": 39
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 218,
+        "y": 213,
+        "w": 39,
+        "h": 39
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "2.png": {
+      "frame": {
+        "x": 114,
+        "y": 128,
+        "w": 31,
+        "h": 39
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 221,
+        "y": 213,
+        "w": 31,
+        "h": 39
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.6",
+    "image": "rock-throw.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 153,
+      "h": 175
+    },
+    "scale": 1
+  }
+}

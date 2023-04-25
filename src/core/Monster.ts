@@ -9,14 +9,14 @@ export interface MonsterConfig {
 }
 
 export class Monster {
-  public static MAX_HEALTH = 1000
+  public static MAX_HEALTH = 500
   public static DAMAGE = 15
 
   private game: Game
   private healthBar: UIValueBar
 
   public sprite: Phaser.Physics.Arcade.Sprite
-  public currStatusType: StatusTypes
+  public currStatusType: StatusTypes = StatusTypes.NONE
   public currStatusIndicatorCircle: Phaser.GameObjects.Arc
   public damageNumQueue: number[] = []
 

@@ -39,6 +39,7 @@ export class ChilledStatus extends Status {
       this.chilledTween.stop()
       Game.instance.tweens.remove(this.chilledTween)
     }
+    super.clear()
   }
 
   public start(): void {

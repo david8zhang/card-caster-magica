@@ -1,0 +1,111 @@
+{
+  "frames": {
+    "1.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 347,
+        "h": 311
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 64,
+        "y": 84,
+        "w": 347,
+        "h": 311
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "3.png": {
+      "frame": {
+        "x": 0,
+        "y": 311,
+        "w": 329,
+        "h": 300
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 73,
+        "y": 92,
+        "w": 329,
+        "h": 300
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "2.png": {
+      "frame": {
+        "x": 347,
+        "y": 0,
+        "w": 326,
+        "h": 295
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 76,
+        "y": 92,
+        "w": 326,
+        "h": 295
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "0.png": {
+      "frame": {
+        "x": 329,
+        "y": 311,
+        "w": 284,
+        "h": 272
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 97,
+        "y": 102,
+        "w": 284,
+        "h": 272
+      },
+      "sourceSize": {
+        "w": 469,
+        "h": 473
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.6",
+    "image": "frozen-shatter.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 673,
+      "h": 611
+    },
+    "scale": 1
+  }
+}

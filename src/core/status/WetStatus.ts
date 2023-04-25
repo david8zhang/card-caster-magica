@@ -24,7 +24,6 @@ export class WetStatus extends Status {
       this.monster.clearStatus()
       return
     }
-
     // wet -> chill or chill -> wet = frozen status
     if (incomingStatus.statusType === StatusTypes.CHILLED) {
       this.monster.setCurrStatus(StatusTypes.FROZEN)
@@ -40,11 +39,13 @@ export class WetStatus extends Status {
       this.wetTween.stop()
       Game.instance.tweens.remove(this.wetTween)
     }
+    super.clear()
   }
 
   public start(): void {
     this.monster.sprite.setTint(0x87ceeb)
     this.wetSprite.setVisible(true)
+    this.wetSprite.setPosition(this.monster.sprite.x, this.monster.sprite.y)
     this.wetTween = Game.instance.tweens.add({
       targets: [this.wetSprite],
       duration: 1000,

@@ -3,6 +3,7 @@ import { SpellCard } from './SpellCard'
 
 export class HealCard extends SpellCard {
   public static HEAL_AMOUNT = 10
+  public healSprite: Phaser.GameObjects.Sprite
 
   constructor(game: Game) {
     super(game, {
@@ -13,6 +14,7 @@ export class HealCard extends SpellCard {
       imageSrc: 'heal',
       descText: 'Heals party for 10 HP',
     })
+    this.healSprite = this.game.add.sprite(0, 0, 'heal-anim').setVisible(false)
   }
 
   public windUp(): void {
@@ -35,32 +37,25 @@ export class HealCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
-      const text = this.game.add.text(
-        this.wizardRef.sprite.x,
-        this.wizardRef.sprite.y,
-        'Healing party!',
-        {
-          fontSize: '12px',
-          color: 'white',
-        }
-      )
-      this.game.tweens.add({
-        targets: [text],
-        duration: this.executionDurationSec * 1000,
-        y: {
-          from: this.wizardRef.sprite.y,
-          to: this.wizardRef.sprite.y - 25,
-        },
-        alpha: {
-          from: 1,
-          to: 0,
-        },
-        onComplete: () => {
-          text.destroy()
-          Game.instance.player.wizards.forEach((wizard) => {
-            wizard.recoverHealth(HealCard.HEAL_AMOUNT)
-          })
-        },
+      this.healSprite
+        .setPosition(this.wizardRef.sprite.x + 25, this.wizardRef.sprite.y - 25)
+        .setVisible(true)
+      this.healSprite.play('heal-anim')
+      this.game.time.delayedCall(2000, () => {
+        Game.instance.player.wizards.forEach((wizard) => {
+          wizard.recoverHealth(HealCard.HEAL_AMOUNT)
+        })
+        this.game.tweens.add({
+          targets: [this.healSprite],
+          duration: 100,
+          alpha: {
+            from: 1,
+            to: 0,
+          },
+          onComplete: () => {
+            this.healSprite.setVisible(false)
+          },
+        })
       })
     }
   }

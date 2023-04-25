@@ -26,6 +26,14 @@ export class FrozenStatus extends Status {
     super.reactToIncomingStatus(incomingStatus)
   }
 
+  shatter() {
+    Game.instance.shakeAfterReaction()
+    this.frozenSprite.play('frozen-shatter', true)
+    this.frozenSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.clear()
+    })
+  }
+
   public clear(): void {
     Game.instance.tweens.add({
       targets: [this.frozenSprite],
@@ -36,6 +44,7 @@ export class FrozenStatus extends Status {
       onComplete: () => {
         this.frozenSprite.setAlpha(1).setVisible(false)
         this.monster.sprite.clearTint()
+        super.clear()
       },
       duration: 200,
     })

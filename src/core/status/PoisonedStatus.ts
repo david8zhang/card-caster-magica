@@ -8,6 +8,7 @@ export class PoisonedStatus extends Status {
   public static POISON_DMG_OVER_TIME = 1
   public poisonedSprite: Phaser.GameObjects.Sprite
   public poisonedTween: Phaser.Tweens.Tween | null = null
+  public explosionSprite: Phaser.GameObjects.Sprite
 
   constructor(monster: Monster) {
     super({
@@ -19,14 +20,30 @@ export class PoisonedStatus extends Status {
     this.poisonedSprite = Game.instance.add
       .sprite(this.monster.sprite.x, this.monster.sprite.y, 'poison')
       .setVisible(false)
+    this.explosionSprite = Game.instance.add
+      .sprite(this.monster.sprite.x, this.monster.sprite.y, 'explosion')
+      .setVisible(false)
+      .setScale(5)
   }
 
   public reactToIncomingStatus(incomingStatus: Status): void {
     // Explosion if ignited while already poisoned (but not the other way around)
     if (incomingStatus.statusType === StatusTypes.IGNITED) {
-      Game.instance.cameras.main.shake(150, 0.005)
-      this.monster.takeDamage(Reactions.EXPLOSION_DAMAGE)
-      this.monster.clearStatus()
+      Game.instance.shakeAfterReaction()
+      this.explosionSprite.setVisible(true).setAlpha(1)
+      this.explosionSprite.play('explosion')
+      this.explosionSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        Game.instance.tweens.add({
+          targets: [this.explosionSprite],
+          alpha: {
+            from: 1,
+            to: 0,
+          },
+          duration: 150,
+        })
+        this.monster.takeDamage(Reactions.EXPLOSION_DAMAGE)
+        this.monster.clearStatus()
+      })
       return
     }
 
@@ -47,7 +64,6 @@ export class PoisonedStatus extends Status {
       this.poisonedTween.stop()
       Game.instance.tweens.remove(this.poisonedTween)
     }
-
     super.clear()
   }
 
@@ -60,6 +76,7 @@ export class PoisonedStatus extends Status {
       },
     })
     this.poisonedSprite.setVisible(true)
+    this.poisonedSprite.setPosition(this.monster.sprite.x, this.monster.sprite.y)
     this.poisonedTween = Game.instance.tweens.add({
       targets: [this.poisonedSprite],
       y: {

@@ -255,7 +255,7 @@ export class Tutorial {
           const spellTimeline = this.game.player.spellTimelines[0]
           const keys = Object.keys(spellTimeline.spellSequenceMapping)
           const timeBetweenSpells = Math.abs(parseInt(keys[0]) - parseInt(keys[1]))
-          return timeBetweenSpells <= 2
+          return timeBetweenSpells <= 3
         }
 
         spellCard1.dragEndCallbacks.push(() => {

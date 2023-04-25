@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { Monster } from '~/core/Monster'
 import { Player } from '~/core/Player'
 import { Tutorial } from '~/core/Tutorial'
+import { createSpellAnims } from '~/core/anims/SpellAnims'
 import { SpellCard } from '~/core/spells/SpellCard'
 import { StatusFactory } from '~/core/status/StatusFactory'
 import { Constants, Sides } from '~/utils/Constants'
@@ -37,6 +38,7 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    createSpellAnims(this.anims)
     const bgImage = this.add.image(Constants.MAP_WIDTH / 2, Constants.MAP_HEIGHT / 2, 'background')
     this.monster = new Monster(this, {
       scale: 12,

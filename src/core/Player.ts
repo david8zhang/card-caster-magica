@@ -11,6 +11,7 @@ import { PoisonGasCard } from './spells/PoisonGasCard'
 import { WaterBlastCard } from './spells/WaterBlastCard'
 import { FrostWindCard } from './spells/FrostWindCard'
 import { RockThrowCard } from './spells/RockThrowCard'
+import { HealCard } from './spells/HealCard'
 
 export interface PlayerConfig {
   wizardConfig: WizardConfig[]
@@ -145,9 +146,9 @@ export class Player {
     }
   }
 
-  drawCardForTutorial(cardType?: string) {
+  drawCardForTutorial(cardType?: string): SpellCard {
     let startX = Constants.MAP_WIDTH / 2 - SpellCard.SPELL_CARD_WIDTH / 2
-    let SpellCardClass = TutorialSpellCard
+    let SpellCardClass: any = TutorialSpellCard
     if (cardType === 'Fireball') {
       SpellCardClass = FireballCard
     }
@@ -162,6 +163,9 @@ export class Player {
     }
     if (cardType === 'RockThrow') {
       SpellCardClass = RockThrowCard
+    }
+    if (cardType === 'Heal') {
+      SpellCardClass = HealCard
     }
     const spellCard = new SpellCardClass(this.game)
     spellCard.spellCardRect.setVisible(true)
