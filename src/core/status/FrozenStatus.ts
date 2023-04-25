@@ -1,7 +1,10 @@
+import Game from '~/scenes/Game'
 import { Monster } from '../Monster'
 import { Status, StatusTypes } from './Status'
 
 export class FrozenStatus extends Status {
+  public frozenSprite: Phaser.GameObjects.Sprite
+
   constructor(monster: Monster) {
     super({
       monster,
@@ -9,6 +12,9 @@ export class FrozenStatus extends Status {
       duration: 2000,
       iconColor: 0xffffff,
     })
+    this.frozenSprite = Game.instance.add
+      .sprite(this.monster.sprite.x, this.monster.sprite.y, 'frozen')
+      .setVisible(false)
   }
 
   public reactToIncomingStatus(incomingStatus: Status): void {
@@ -20,10 +26,24 @@ export class FrozenStatus extends Status {
     super.reactToIncomingStatus(incomingStatus)
   }
 
-  public clear(): void {}
+  public clear(): void {
+    Game.instance.tweens.add({
+      targets: [this.frozenSprite],
+      alpha: {
+        from: 1,
+        to: 0,
+      },
+      onComplete: () => {
+        this.frozenSprite.setAlpha(1).setVisible(false)
+        this.monster.sprite.clearTint()
+      },
+      duration: 200,
+    })
+  }
 
   public start(): void {
-    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
+    this.monster.sprite.setTint(this.iconColor!)
+    this.frozenSprite.setVisible(true)
     super.start()
   }
 }

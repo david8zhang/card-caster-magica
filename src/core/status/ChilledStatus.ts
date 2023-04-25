@@ -1,7 +1,11 @@
+import Game from '~/scenes/Game'
 import { Monster } from '../Monster'
 import { Status, StatusTypes } from './Status'
 
 export class ChilledStatus extends Status {
+  public chilledSprite: Phaser.GameObjects.Sprite
+  public chilledTween: Phaser.Tweens.Tween | null = null
+
   constructor(monster: Monster) {
     super({
       statusType: StatusTypes.CHILLED,
@@ -9,6 +13,9 @@ export class ChilledStatus extends Status {
       duration: 1000,
       iconColor: 0x33feff,
     })
+    this.chilledSprite = Game.instance.add
+      .sprite(this.monster.sprite.x, this.monster.sprite.y, 'chilled')
+      .setVisible(false)
   }
 
   public reactToIncomingStatus(incomingStatus: Status): void {
@@ -25,9 +32,25 @@ export class ChilledStatus extends Status {
     }
     super.reactToIncomingStatus(incomingStatus)
   }
-  public clear(): void {}
+  public clear(): void {
+    this.monster.sprite.clearTint()
+    this.chilledSprite.setVisible(false)
+    if (this.chilledTween) {
+      this.chilledTween.stop()
+      Game.instance.tweens.remove(this.chilledTween)
+    }
+  }
+
   public start(): void {
-    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
+    this.chilledSprite.setVisible(true)
+    this.monster.sprite.setTint(this.iconColor!)
+    this.chilledTween = Game.instance.tweens.add({
+      targets: [this.chilledSprite, this.monster.sprite],
+      x: '+=5',
+      duration: 50,
+      yoyo: true,
+      repeat: -1,
+    })
     super.start()
   }
 }

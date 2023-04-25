@@ -83,6 +83,7 @@ export class Player {
 
   startSequences() {
     this.startSequenceButton.setVisible(false)
+    this.resetSequenceButton.setVisible(false)
     this.isPlayingSequence = true
     this.spellTimelines.forEach((timeline) => {
       if (timeline.isActive) {
@@ -128,7 +129,9 @@ export class Player {
   }
 
   drawCards(numCardsToDraw: number = Player.NUM_CARDS_TO_DRAW) {
+    const distanceBetweenCards = Math.min(110, 521 / (this.currentHand.length + numCardsToDraw))
     let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * numCardsToDraw) / 2
+
     const randomCardTypes = SpellTypes
     for (let i = 0; i < numCardsToDraw; i++) {
       const SpellCardClass = randomCardTypes[Phaser.Math.Between(0, randomCardTypes.length - 1)]
@@ -136,7 +139,7 @@ export class Player {
       if (spellCard) {
         spellCard.spellCardRect.setVisible(true)
         spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 85)
-        startX += 110
+        startX += distanceBetweenCards
         this.currentHand.push(spellCard)
       }
     }
@@ -185,12 +188,14 @@ export class Player {
 
   updateCardsInHand() {
     const unplayedCards = this.currentHand.filter((card) => !card.wasPlayed)
+    const distanceBetweenCards = Math.min(110, 521 / unplayedCards.length)
+
     let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * unplayedCards.length) / 2
     for (let i = 0; i < unplayedCards.length; i++) {
       const spellCard = unplayedCards[i]
       spellCard.spellCardRect.setVisible(true)
       spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 85)
-      startX += 110
+      startX += distanceBetweenCards
     }
   }
 
@@ -198,6 +203,7 @@ export class Player {
     this.hasTimelineFinishedBeenCalled = false
     this.isPlayingSequence = false
     this.startSequenceButton.setVisible(true)
+    this.resetSequenceButton.setVisible(true)
     this.drawCards()
     this.updateCardsInHand()
   }

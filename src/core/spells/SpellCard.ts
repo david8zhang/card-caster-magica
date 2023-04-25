@@ -30,10 +30,13 @@ export abstract class SpellCard {
   public spellTimelineExecutionRect!: Phaser.GameObjects.Rectangle
   public spellTimelineStatusEffectRect: Phaser.GameObjects.Rectangle | null = null
 
+  // Card
   public spellCardBg!: Phaser.GameObjects.Rectangle
   public spellCardRect!: Phaser.GameObjects.Rectangle
   public spellImage!: Phaser.GameObjects.Image
   public spellBorder!: Phaser.GameObjects.Rectangle
+
+  // Description text
   public spellWindUpText!: Phaser.GameObjects.Text
   public spellExecutionText!: Phaser.GameObjects.Text
   public descriptionText!: Phaser.GameObjects.Text
@@ -124,13 +127,19 @@ export abstract class SpellCard {
   public setupCardRect(): void {
     this.spellCardBg = this.game.add
       .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, 0xffffff)
-      .setStrokeStyle(5, this.cardColor)
+      .setStrokeStyle(6, this.cardColor)
       .setVisible(false)
     this.spellCardRect = this.game.add
       .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, this.cardColor)
       .setAlpha(0.8)
       .setVisible(false)
       .setInteractive({ draggable: true })
+      .on(Phaser.Input.Events.POINTER_OVER, () => {
+        this.hoverCard()
+      })
+      .on(Phaser.Input.Events.POINTER_OUT, () => {
+        this.unHoverCard()
+      })
 
     this.spellBorder = this.game.add.rectangle(0, 0, 79, 79, 0x000000).setVisible(false)
     this.spellImage = this.game.add.image(0, 0, this.imageSrc).setVisible(false)
@@ -153,36 +162,18 @@ export abstract class SpellCard {
     this.wasPlayed = true
   }
 
-  public highlight(): void {
-    this.spellCardRect.setStrokeStyle(2, 0xffff00)
-  }
-
-  public dehighlight(): void {
-    this.spellCardRect.setStrokeStyle(0)
-  }
-
   public hoverCard() {
-    this.setCardPosition(this.spellCardRect.x, this.spellCardRect.y - 50)
-
-    this.spellCardBg.setScale(1.5).setDepth(Constants.SORT_LAYERS.UI)
-    this.spellCardRect.setScale(1.5).setDepth(Constants.SORT_LAYERS.UI)
-    this.spellImage
-      .setScale(1.5)
-      .setDepth(Constants.SORT_LAYERS.UI)
-      .setPosition(this.spellCardRect.x, this.spellCardRect.y - 40)
-
-    this.spellBorder
-      .setScale(1.5)
-      .setDepth(Constants.SORT_LAYERS.UI)
-      .setPosition(this.spellImage.x, this.spellImage.y)
+    this.spellCardBg.setStrokeStyle(6, 0xffff00).setDepth(Constants.SORT_LAYERS.UI)
+    this.spellCardRect.setDepth(Constants.SORT_LAYERS.UI)
+    this.spellImage.setDepth(Constants.SORT_LAYERS.UI)
+    this.spellBorder.setDepth(Constants.SORT_LAYERS.UI)
   }
 
   public unHoverCard() {
-    this.setCardPosition(this.spellCardRect.x, this.spellCardRect.y + 50)
-    this.spellCardBg.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
-    this.spellCardRect.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
-    this.spellImage.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
-    this.spellBorder.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellCardBg.setStrokeStyle(6, this.cardColor).setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellCardRect.setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellImage.setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellBorder.setDepth(Constants.SORT_LAYERS.SPELL)
   }
 
   public handleDrag(dragX: number, dragY: number) {

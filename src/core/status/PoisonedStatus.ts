@@ -6,6 +6,8 @@ import Game from '~/scenes/Game'
 export class PoisonedStatus extends Status {
   private damageOverTimeEvent!: Phaser.Time.TimerEvent
   public static POISON_DMG_OVER_TIME = 1
+  public poisonedSprite: Phaser.GameObjects.Sprite
+  public poisonedTween: Phaser.Tweens.Tween | null = null
 
   constructor(monster: Monster) {
     super({
@@ -14,6 +16,9 @@ export class PoisonedStatus extends Status {
       duration: 2000,
       iconColor: 0x0bda51,
     })
+    this.poisonedSprite = Game.instance.add
+      .sprite(this.monster.sprite.x, this.monster.sprite.y, 'poison')
+      .setVisible(false)
   }
 
   public reactToIncomingStatus(incomingStatus: Status): void {
@@ -35,6 +40,14 @@ export class PoisonedStatus extends Status {
   public clear(): void {
     this.damageOverTimeEvent.paused = true
     this.damageOverTimeEvent.destroy()
+    this.monster.sprite.clearTint()
+    this.poisonedSprite.setVisible(false)
+
+    if (this.poisonedTween) {
+      this.poisonedTween.stop()
+      Game.instance.tweens.remove(this.poisonedTween)
+    }
+
     super.clear()
   }
 
@@ -46,7 +59,21 @@ export class PoisonedStatus extends Status {
         this.monster.takeDamage(PoisonedStatus.POISON_DMG_OVER_TIME)
       },
     })
-    this.monster.currStatusIndicatorCircle.setFillStyle(this.iconColor!).setVisible(true)
+    this.poisonedSprite.setVisible(true)
+    this.poisonedTween = Game.instance.tweens.add({
+      targets: [this.poisonedSprite],
+      y: {
+        from: this.poisonedSprite.y,
+        to: this.poisonedSprite.y - 50,
+      },
+      alpha: {
+        from: 1,
+        to: 0,
+      },
+      duration: 500,
+      repeat: -1,
+    })
+    this.monster.sprite.setTint(0x0bda51)
     super.start()
   }
 }
