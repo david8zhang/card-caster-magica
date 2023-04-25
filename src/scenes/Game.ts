@@ -37,9 +37,7 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
-    const bgImage = this.add
-      .rectangle(0, 0, Constants.MAP_WIDTH, Constants.MAP_HEIGHT, 0xc2b280)
-      .setOrigin(0)
+    const bgImage = this.add.image(Constants.MAP_WIDTH / 2, Constants.MAP_HEIGHT / 2, 'background')
     this.monster = new Monster(this, {
       scale: 12,
       texture: 'cyclops',

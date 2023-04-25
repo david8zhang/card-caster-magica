@@ -36,12 +36,13 @@ export class Monster {
 
     this.healthBar = new UIValueBar(this.game, {
       x: this.sprite.x - healthBarWidth / 2,
-      y: this.sprite.y - (this.sprite.displayHeight / 2 + 25),
+      y: this.sprite.y + (this.sprite.displayHeight / 2 + 25),
       width: healthBarWidth,
       height: 10,
       maxValue: Monster.MAX_HEALTH,
       borderWidth: 2,
       showBorder: true,
+      borderColor: 0x000000,
     })
     this.currStatusType = StatusTypes.NONE
     this.currStatusIndicatorCircle = this.game.add

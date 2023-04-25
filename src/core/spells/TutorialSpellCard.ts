@@ -10,6 +10,7 @@ export class TutorialSpellCard extends SpellCard {
       executionDurationSec: 1,
       name: 'Fireball',
       cardColor: 0xffa500,
+      imageSrc: 'fireball',
     })
   }
 

@@ -12,6 +12,8 @@ export class RockThrowCard extends SpellCard {
       windUpDurationSec: 2,
       executionDurationSec: 1,
       cardColor: 0x964b00,
+      imageSrc: 'rock-throw',
+      descText: 'Throws a boulder and deals 25 damage',
     })
   }
 

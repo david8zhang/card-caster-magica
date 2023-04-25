@@ -12,6 +12,8 @@ export class PoisonGasCard extends SpellCard {
       name: 'PoisonGas',
       cardColor: 0x0bda51,
       statusEffect: StatusTypes.POISONED,
+      imageSrc: 'poison-gas',
+      descText: 'Produces poison gas and deals 10 damage. Applies poison effect',
     })
   }
 

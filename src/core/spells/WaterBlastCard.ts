@@ -12,6 +12,8 @@ export class WaterBlastCard extends SpellCard {
       executionDurationSec: 1,
       cardColor: 0x1434a4,
       statusEffect: StatusTypes.WET,
+      imageSrc: 'water-blast',
+      descText: 'Blasts foe with water and deals 5 damage. Applies wet effect',
     })
     this.spellTimelineStatusEffectRect?.setStrokeStyle(2, 0x0000ff, 1).setAlpha(0.5)
   }

@@ -27,6 +27,8 @@ export class Tutorial {
         const spellTimeline = this.game.player.spellTimelines[1]
         spellTimeline.deactivate()
 
+        this.game.monster.sprite.setScale(12).setTexture('spider')
+
         this.game.player.startSequenceButton.setVisible(false)
         this.game.player.resetSequenceButton.setVisible(false)
       },

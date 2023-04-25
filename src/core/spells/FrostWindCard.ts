@@ -12,6 +12,8 @@ export class FrostWindCard extends SpellCard {
       executionDurationSec: 2,
       cardColor: 0x33feff,
       statusEffect: StatusTypes.CHILLED,
+      imageSrc: 'frost-wind',
+      descText: 'Blows frosty wind and deals 10 damage. Applies chilled effect',
     })
   }
 

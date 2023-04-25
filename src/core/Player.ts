@@ -135,8 +135,8 @@ export class Player {
       const spellCard = new SpellCardClass(this.game)
       if (spellCard) {
         spellCard.spellCardRect.setVisible(true)
-        spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 75)
-        startX += 85
+        spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 85)
+        startX += 110
         this.currentHand.push(spellCard)
       }
     }
@@ -189,8 +189,8 @@ export class Player {
     for (let i = 0; i < unplayedCards.length; i++) {
       const spellCard = unplayedCards[i]
       spellCard.spellCardRect.setVisible(true)
-      spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 75)
-      startX += 85
+      spellCard.setCardPosition(startX, Constants.WINDOW_HEIGHT - 85)
+      startX += 110
     }
   }
 

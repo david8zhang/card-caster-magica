@@ -2,12 +2,15 @@ import Game from '~/scenes/Game'
 import { Wizard } from '../Wizard'
 import { SpellTimeline } from '../SpellTimeline'
 import { Status, StatusTypes } from '../status/Status'
+import { Constants } from '~/utils/Constants'
 
 export interface SpellCardConfig {
   name: string
   windUpDurationSec: number
   executionDurationSec: number
   cardColor: number
+  imageSrc: string
+  descText: string
   statusEffect?: StatusTypes
 }
 
@@ -17,16 +20,26 @@ export abstract class SpellCard {
   public executionDurationSec: number
   public statusEffect: StatusTypes | null = null
 
-  public static SPELL_CARD_WIDTH = 75
-  public static SPELL_CARD_HEIGHT = 125
+  public static SPELL_CARD_WIDTH = 95
+  public static SPELL_CARD_HEIGHT = 150
 
   public name: string
+  public descText: string
 
   public spellTimelineWindUpRect!: Phaser.GameObjects.Rectangle
   public spellTimelineExecutionRect!: Phaser.GameObjects.Rectangle
   public spellTimelineStatusEffectRect: Phaser.GameObjects.Rectangle | null = null
 
+  public spellCardBg!: Phaser.GameObjects.Rectangle
   public spellCardRect!: Phaser.GameObjects.Rectangle
+  public spellImage!: Phaser.GameObjects.Image
+  public spellBorder!: Phaser.GameObjects.Rectangle
+  public spellWindUpText!: Phaser.GameObjects.Text
+  public spellExecutionText!: Phaser.GameObjects.Text
+  public descriptionText!: Phaser.GameObjects.Text
+
+  public imageSrc: string
+
   public wasPlayed: boolean = false
   public wizardRef: Wizard | null = null
   public cardColor: number
@@ -40,6 +53,8 @@ export abstract class SpellCard {
     this.executionDurationSec = config.executionDurationSec
     this.name = config.name
     this.cardColor = config.cardColor
+    this.imageSrc = config.imageSrc
+    this.descText = config.descText
     if (config.statusEffect) {
       this.statusEffect = config.statusEffect
     }
@@ -73,7 +88,7 @@ export abstract class SpellCard {
         (statusEffectObj.duration / 1000) * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
       this.spellTimelineStatusEffectRect = this.game.add
         .rectangle(0, 0, statusEffectRectWidth, SpellTimeline.SPELL_TIMELINE_HEIGHT - 20)
-        .setFillStyle(statusEffectObj.iconColor || 0x000000, 0.4)
+        .setFillStyle(statusEffectObj.iconColor || 0x000000, 0.6)
         .setVisible(false)
     }
   }
@@ -84,7 +99,7 @@ export abstract class SpellCard {
     if (this.spellTimelineStatusEffectRect) {
       this.spellTimelineStatusEffectRect.setOrigin(0)
     }
-    this.spellTimelineWindUpRect.setPosition(x, y).setVisible(true).setAlpha(0.4)
+    this.spellTimelineWindUpRect.setPosition(x, y).setVisible(true).setAlpha(0.6)
     this.spellTimelineExecutionRect
       .setPosition(x + this.spellTimelineWindUpRect.displayWidth, y)
       .setVisible(true)
@@ -107,16 +122,30 @@ export abstract class SpellCard {
   }
 
   public setupCardRect(): void {
+    this.spellCardBg = this.game.add
+      .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, 0xffffff)
+      .setStrokeStyle(5, this.cardColor)
+      .setVisible(false)
     this.spellCardRect = this.game.add
       .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, this.cardColor)
+      .setAlpha(0.8)
       .setVisible(false)
       .setInteractive({ draggable: true })
+
+    this.spellBorder = this.game.add.rectangle(0, 0, 79, 79, 0x000000).setVisible(false)
+    this.spellImage = this.game.add.image(0, 0, this.imageSrc).setVisible(false)
     this.spellCardRect.setData('ref', this)
   }
 
-  public setCardPosition(x: number, y: number) {
-    this.preDragPosition = { x, y }
+  public setCardPosition(x: number, y: number, setPreDrag: boolean = true) {
+    if (setPreDrag) {
+      this.preDragPosition = { x, y }
+    }
+    this.showSpellCard()
+    this.spellCardBg.setPosition(x, y)
     this.spellCardRect.setPosition(x, y)
+    this.spellImage.setPosition(x, y - 28)
+    this.spellBorder.setPosition(this.spellImage.x, this.spellImage.y)
   }
 
   public onPlay() {
@@ -132,8 +161,32 @@ export abstract class SpellCard {
     this.spellCardRect.setStrokeStyle(0)
   }
 
+  public hoverCard() {
+    this.setCardPosition(this.spellCardRect.x, this.spellCardRect.y - 50)
+
+    this.spellCardBg.setScale(1.5).setDepth(Constants.SORT_LAYERS.UI)
+    this.spellCardRect.setScale(1.5).setDepth(Constants.SORT_LAYERS.UI)
+    this.spellImage
+      .setScale(1.5)
+      .setDepth(Constants.SORT_LAYERS.UI)
+      .setPosition(this.spellCardRect.x, this.spellCardRect.y - 40)
+
+    this.spellBorder
+      .setScale(1.5)
+      .setDepth(Constants.SORT_LAYERS.UI)
+      .setPosition(this.spellImage.x, this.spellImage.y)
+  }
+
+  public unHoverCard() {
+    this.setCardPosition(this.spellCardRect.x, this.spellCardRect.y + 50)
+    this.spellCardBg.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellCardRect.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellImage.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellBorder.setScale(1).setDepth(Constants.SORT_LAYERS.SPELL)
+  }
+
   public handleDrag(dragX: number, dragY: number) {
-    this.spellCardRect.setPosition(dragX, dragY)
+    this.setCardPosition(dragX, dragY, false)
     const spellTimelines = this.game.player.spellTimelines
     let newSpellTimeline: SpellTimeline | null = null
     spellTimelines.forEach((spellTimeline: SpellTimeline) => {
@@ -147,9 +200,23 @@ export abstract class SpellCard {
     })
     if (newSpellTimeline === null) {
       this.hideTimelineRect()
-      this.spellCardRect.setVisible(true)
+      this.showSpellCard()
     }
     this.spellTimelineToDropOn = newSpellTimeline
+  }
+
+  hideSpellCard() {
+    this.spellCardBg.setVisible(false)
+    this.spellCardRect.setVisible(false)
+    this.spellBorder.setVisible(false)
+    this.spellImage.setVisible(false)
+  }
+
+  showSpellCard() {
+    this.spellCardBg.setVisible(true)
+    this.spellCardRect.setVisible(true)
+    this.spellBorder.setVisible(true)
+    this.spellImage.setVisible(true)
   }
 
   public get spellTimelineRectWidth() {
@@ -173,7 +240,7 @@ export abstract class SpellCard {
       this.spellCardRect.setVisible(true)
       this.hideTimelineRect()
       if (this.preDragPosition) {
-        this.spellCardRect.setPosition(this.preDragPosition.x, this.preDragPosition.y)
+        this.setCardPosition(this.preDragPosition.x, this.preDragPosition.y)
       }
     }
   }

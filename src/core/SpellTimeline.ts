@@ -104,13 +104,13 @@ export class SpellTimeline {
   previewCardDrop(spellCard: SpellCard) {
     const startingTickMark = this.getTickMarkForRectPosition(spellCard)
     const startX = startingTickMark * (this.rectangle.displayWidth / 10) + this.rectangle.x
-    spellCard.spellCardRect.setVisible(false)
+    spellCard.hideSpellCard()
     spellCard.setTimelineRectPositions(startX, this.rectangle.y)
 
     if (!this.canPlayCard(spellCard)) {
-      spellCard.setTimelineRectFillStyle(0x888888, 0.5)
+      spellCard.setTimelineRectFillStyle(0x888888, 0.75)
     } else {
-      spellCard.setTimelineRectFillStyle(spellCard.cardColor, 0.5)
+      spellCard.setTimelineRectFillStyle(spellCard.cardColor, 0.75)
     }
   }
 

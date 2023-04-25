@@ -10,6 +10,8 @@ export class HealCard extends SpellCard {
       windUpDurationSec: 2,
       executionDurationSec: 2,
       cardColor: 0xf8c8dc,
+      imageSrc: 'heal',
+      descText: 'Heals party for 10 HP',
     })
   }
 

@@ -12,6 +12,8 @@ export class FireballCard extends SpellCard {
       name: 'Fireball',
       cardColor: 0xffa500,
       statusEffect: StatusTypes.IGNITED,
+      imageSrc: 'fireball',
+      descText: 'Shoots a fireball and deals 10 damage. Applies ignite effect',
     })
   }
 

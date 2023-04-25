@@ -29,12 +29,13 @@ export class Wizard {
     const healthBarWidth = this.sprite.displayWidth * 2
     this.healthBar = new UIValueBar(game, {
       x: this.sprite.x - healthBarWidth / 2,
-      y: this.sprite.y - (this.sprite.displayHeight / 2 + 15),
+      y: this.sprite.y + (this.sprite.displayHeight / 2 + 15),
       width: healthBarWidth,
       height: 5,
       maxValue: Wizard.MAX_HEALTH,
       borderWidth: 2,
       showBorder: true,
+      borderColor: 0x000000,
     })
   }
 
