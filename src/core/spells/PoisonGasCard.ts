@@ -23,26 +23,11 @@ export class PoisonGasCard extends SpellCard {
       .setVisible(false)
   }
 
-  public windUp() {
-    if (this.wizardRef) {
-      // TODO: Replace this with an actual fireball charging animation
-      const text = this.game.add.text(
-        this.wizardRef.sprite.x,
-        this.wizardRef.sprite.y - 20,
-        'Charging poison gas...',
-        {
-          fontSize: '12px',
-          color: 'white',
-        }
-      )
-      this.game.time.delayedCall(this.windUpDurationSec * 1000, () => {
-        text.destroy()
-      })
-    }
-  }
-
   public execute() {
     if (this.wizardRef) {
+      this.game.sound.play('poison-cloud', {
+        volume: 0.4,
+      })
       this.game.tweens.add({
         targets: [this.game.monster.sprite],
         x: '+=5',

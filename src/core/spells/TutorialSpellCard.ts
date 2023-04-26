@@ -20,6 +20,7 @@ export class TutorialSpellCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
+      this.game.sound.play('fireball')
       this.fireballSprite
         .setPosition(
           this.wizardRef.sprite.x,

@@ -19,6 +19,7 @@ export class HealCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
+      this.game.sound.play('heal', { volume: 0.4 })
       this.healSprite
         .setPosition(this.wizardRef.sprite.x + 25, this.wizardRef.sprite.y - 25)
         .setVisible(true)

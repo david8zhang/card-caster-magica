@@ -23,6 +23,9 @@ export class WaterBlastCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
+      this.game.sound.play('water-blast', {
+        volume: 0.5,
+      })
       this.waterBlastSprite
         .setPosition(Constants.MAP_WIDTH / 2, this.wizardRef.sprite.y - 50)
         .setVisible(true)

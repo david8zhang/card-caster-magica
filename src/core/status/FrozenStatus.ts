@@ -28,6 +28,7 @@ export class FrozenStatus extends Status {
 
   shatter() {
     Game.instance.shakeAfterReaction()
+    Game.instance.sound.play('shatter')
     this.frozenSprite.play('frozen-shatter', true)
     this.frozenSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.clear()
@@ -51,6 +52,7 @@ export class FrozenStatus extends Status {
   }
 
   public start(): void {
+    Game.instance.sound.play('freeze')
     this.monster.sprite.setTint(this.iconColor!)
     this.frozenSprite.setVisible(true).setTexture('frozen')
     super.start()

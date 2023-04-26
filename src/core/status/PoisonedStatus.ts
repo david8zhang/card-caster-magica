@@ -29,6 +29,7 @@ export class PoisonedStatus extends Status {
   public reactToIncomingStatus(incomingStatusType: StatusTypes): void {
     // Explosion if ignited while already poisoned (but not the other way around)
     if (incomingStatusType === StatusTypes.IGNITED) {
+      Game.instance.sound.play('explosion')
       Game.instance.shakeAfterReaction()
       this.explosionSprite.setVisible(true).setAlpha(1)
       this.explosionSprite.play('explosion')

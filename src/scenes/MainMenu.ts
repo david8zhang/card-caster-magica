@@ -8,6 +8,11 @@ export class MainMenu extends Scene {
   }
 
   create() {
+    this.sound.play('bgm', {
+      loop: true,
+      volume: 0.4,
+    })
+
     const bgImage = this.add.image(
       Constants.WINDOW_WIDTH / 2,
       Constants.WINDOW_HEIGHT / 2,

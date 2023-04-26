@@ -23,6 +23,9 @@ export class FireballCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
+      this.game.sound.play('fireball', {
+        volume: 0.4,
+      })
       this.fireballSprite
         .setPosition(
           this.wizardRef.sprite.x,

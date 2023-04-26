@@ -12,6 +12,24 @@ export class Preload extends Scene {
     this.loadSpellAnimations()
     this.load.image('background', 'background.png')
     this.load.image('splash-art', 'splash-art.png')
+    this.loadSound()
+  }
+
+  loadSound() {
+    this.load.audio('ignited', 'sound/ignited.mp3')
+    this.load.audio('bgm', 'sound/splash-bgm.mp3')
+    this.load.audio('battle', 'sound/battle-music.mp3')
+    this.load.audio('heal', 'sound/heal.wav')
+    this.load.audio('fireball', 'sound/fireball.mp3')
+    this.load.audio('explosion', 'sound/explosion.wav')
+    this.load.audio('frost-wind', 'sound/frost-wind.mp3')
+    this.load.audio('monster-attack', 'sound/monster-attack.mp3')
+    this.load.audio('poison-cloud', 'sound/poison-cloud.mp3')
+    this.load.audio('rock-blast', 'sound/rock-blast.mp3')
+    this.load.audio('shatter', 'sound/shatter.mp3')
+    this.load.audio('water-blast', 'sound/water-blast.mp3')
+    this.load.audio('whoosh', 'sound/whoosh.mp3')
+    this.load.audio('freeze', 'sound/freeze.mp3')
   }
 
   loadSpellAnimations() {

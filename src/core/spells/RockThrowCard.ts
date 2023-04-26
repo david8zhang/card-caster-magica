@@ -22,6 +22,7 @@ export class RockThrowCard extends SpellCard {
 
   public execute() {
     if (this.wizardRef) {
+      this.game.sound.play('whoosh')
       this.rockThrowSprite.setPosition(
         this.wizardRef.sprite.x,
         this.wizardRef.sprite.y - this.wizardRef.sprite.displayHeight / 2
@@ -57,6 +58,9 @@ export class RockThrowCard extends SpellCard {
             frozenStatus.shatter()
             this.game.monster.takeDamage(Reactions.SHATTER_DAMAGE)
           }
+          this.game.sound.play('rock-blast', {
+            volume: 0.7,
+          })
           this.rockThrowSprite.play('rock-explosion-anim', true)
           this.rockThrowSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.rockThrowSprite.setVisible(false)

@@ -244,7 +244,7 @@ export class Tutorial {
       textToShow: 'You can also combine status effects for some cool effects!',
     },
     {
-      textToShow: 'Try playing this attack where "Poison Gas" overlaps with "Fireball"',
+      textToShow: 'Try playing this attack where "Water Blast" overlaps with "Frost Wind"',
       onStart: () => {
         const waterSpell = this.game.player.drawCardForTutorial('WaterBlast')
         const frostWind = this.game.player.drawCardForTutorial('FrostWind')
@@ -300,9 +300,9 @@ export class Tutorial {
         fontSize: '16px',
       },
       onStart: () => {
+        this.game.player.isPlayingSequence = false
         const spellTimeline = this.game.player.spellTimelines[0]
         spellTimeline.clear()
-
         this.didCallSequenceCompleteCb = false
         const wizard2 = this.game.player.wizards[1]
         wizard2.setVisible(true)

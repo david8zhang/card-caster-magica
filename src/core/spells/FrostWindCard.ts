@@ -17,12 +17,17 @@ export class FrostWindCard extends SpellCard {
       imageSrc: 'frost-wind',
       descText: 'Blows frosty wind and deals 10 damage. Applies chilled effect',
     })
-    this.frostWindSprite = this.game.add.sprite(0, 0, 'frost-wind-anim')
+    this.frostWindSprite = this.game.add.sprite(0, 0, 'frost-wind-anim').setVisible(false)
   }
 
   public execute() {
     if (this.wizardRef) {
-      this.frostWindSprite.setPosition(Constants.MAP_WIDTH / 2, this.wizardRef.sprite.y)
+      this.game.sound.play('frost-wind', {
+        volume: 0.5,
+      })
+      this.frostWindSprite
+        .setPosition(Constants.MAP_WIDTH / 2, this.wizardRef.sprite.y)
+        .setVisible(true)
       this.frostWindSprite.play('frost-wind-anim')
       this.game.tweens.add({
         targets: [this.frostWindSprite],

@@ -123,36 +123,25 @@ export class Monster {
   }
 
   attackPlayerWizards() {
-    const attackingText = this.game.add.text(this.sprite.x, this.sprite.y, 'Attacking!')
-    attackingText.setPosition(attackingText.x - attackingText.displayWidth / 2, this.sprite.y)
-    this.game.tweens.add({
-      targets: [attackingText],
-      y: '-=20',
-      alpha: {
-        from: 1,
-        to: 0,
-      },
-      duration: 500,
-      onComplete: () => {
-        this.game.player.wizards.forEach((wizard: Wizard, index: number) => {
-          const sprite = this.attackSprites[index]
-          if (!sprite.getData('wizardRef')) {
-            sprite.setData('wizardRef', wizard)
-          }
-          sprite
-            .setPosition(wizard.sprite.x + 75, wizard.sprite.y - 75)
-            .setVisible(true)
-            .setAlpha(1)
-          sprite.play('swipe')
-        })
-        this.game.time.delayedCall(200, () => {
-          this.game.switchTurn()
-        })
-      },
+    this.game.sound.play('monster-attack')
+    this.game.player.wizards.forEach((wizard: Wizard, index: number) => {
+      const sprite = this.attackSprites[index]
+      if (!sprite.getData('wizardRef')) {
+        sprite.setData('wizardRef', wizard)
+      }
+      sprite
+        .setPosition(wizard.sprite.x + 75, wizard.sprite.y - 75)
+        .setVisible(true)
+        .setAlpha(1)
+      sprite.play('swipe')
+    })
+    this.game.time.delayedCall(200, () => {
+      this.game.switchTurn()
     })
   }
 
   applyStatusEffects(incomingStatusType: StatusTypes) {
+    console.log('Setting status: ', incomingStatusType)
     this.currStatus.reactToIncomingStatus(incomingStatusType)
   }
 

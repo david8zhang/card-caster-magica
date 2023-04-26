@@ -42,8 +42,13 @@ export abstract class Status {
     return
   }
   public start(): void {
+    if (this.expirationEvent) {
+      console.log('Reset expiration')
+      this.expirationEvent.paused = true
+      this.expirationEvent.destroy()
+    }
     this.expirationEvent = Game.instance.time.delayedCall(this.duration - 50, () => {
-      console.log('Expired event')
+      console.log('Clear status')
       this.monster.clearStatus()
     })
     return
