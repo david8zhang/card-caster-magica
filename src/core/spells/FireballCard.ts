@@ -5,6 +5,7 @@ import { StatusTypes } from '../status/Status'
 export class FireballCard extends SpellCard {
   public static DAMAGE = 10
   public fireballSprite: Phaser.GameObjects.Sprite
+  public chargingSprite: Phaser.GameObjects.Sprite
 
   constructor(game: Game) {
     super(game, {
@@ -17,24 +18,7 @@ export class FireballCard extends SpellCard {
       descText: 'Shoots a fireball and deals 10 damage. Applies ignite effect',
     })
     this.fireballSprite = this.game.add.sprite(0, 0, 'fireball-anim').setVisible(false)
-  }
-
-  public windUp() {
-    if (this.wizardRef) {
-      // TODO: Replace this with an actual fireball charging animation
-      const text = this.game.add.text(
-        this.wizardRef.sprite.x,
-        this.wizardRef.sprite.y - 20,
-        'Charging fireball...',
-        {
-          fontSize: '12px',
-          color: 'white',
-        }
-      )
-      this.game.time.delayedCall(this.windUpDurationSec * 1000, () => {
-        text.destroy()
-      })
-    }
+    this.chargingSprite = this.game.add.sprite(0, 0, '').setVisible(false)
   }
 
   public execute() {

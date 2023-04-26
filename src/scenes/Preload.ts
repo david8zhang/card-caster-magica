@@ -11,6 +11,7 @@ export class Preload extends Scene {
     this.loadStatuses()
     this.loadSpellAnimations()
     this.load.image('background', 'background.png')
+    this.load.image('splash-art', 'splash-art.png')
   }
 
   loadSpellAnimations() {
@@ -28,8 +29,8 @@ export class Preload extends Scene {
     this.load.image('rockball', 'spells/animations/rockball.png')
     this.load.atlas(
       'rock-explosion-anim',
-      'spells/animations/rock-throw.png',
-      'spells/animations/rock-throw.json'
+      'spells/animations/rock-explosion.png',
+      'spells/animations/rock-explosion.json'
     )
     this.load.atlas(
       'frozen-shatter',
@@ -51,6 +52,7 @@ export class Preload extends Scene {
       'spells/animations/big-explosion.png',
       'spells/animations/big-explosion.json'
     )
+    this.load.atlas('swipe', 'spells/animations/swipe.png', 'spells/animations/swipe.json')
   }
 
   laodEntities() {

@@ -1,6 +1,14 @@
 <html>
   <head>
     <style>
+      @font-face {
+        font-family: 'Althea';
+        src: url('../public/fonts/Althea-Bold.ttf');
+      }
+      @font-face {
+        font-family: 'Cambria';
+        src: url('../public/fonts/Cambria.ttf');
+      }
       body {
         margin: 0px;
       }
@@ -8,6 +16,8 @@
     <title>Card Caster Synchronize</title>
   </head>
   <body id="phaser">
+    <div style="font-family: Althea; position: absolute; visibility: hidden">.</div>
+    <div style="font-family: Cambria; position: absolute; visibility: hidden">.</div>
     <script src="main.ts"></script>
     <script src="jsx-dom-shim.ts"></script>
   </body>

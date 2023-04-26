@@ -9,7 +9,7 @@ export class FrozenStatus extends Status {
     super({
       monster,
       statusType: StatusTypes.FROZEN,
-      duration: 2000,
+      duration: 3000,
       iconColor: 0xffffff,
     })
     this.frozenSprite = Game.instance.add
@@ -17,13 +17,13 @@ export class FrozenStatus extends Status {
       .setVisible(false)
   }
 
-  public reactToIncomingStatus(incomingStatus: Status): void {
+  public reactToIncomingStatus(incomingStatusType: StatusTypes): void {
     // Fire thaws frozen status
-    if (incomingStatus.statusType === StatusTypes.IGNITED) {
+    if (incomingStatusType === StatusTypes.IGNITED) {
       this.monster.clearStatus()
       return
     }
-    super.reactToIncomingStatus(incomingStatus)
+    super.reactToIncomingStatus(incomingStatusType)
   }
 
   shatter() {
@@ -52,7 +52,7 @@ export class FrozenStatus extends Status {
 
   public start(): void {
     this.monster.sprite.setTint(this.iconColor!)
-    this.frozenSprite.setVisible(true)
+    this.frozenSprite.setVisible(true).setTexture('frozen')
     super.start()
   }
 }

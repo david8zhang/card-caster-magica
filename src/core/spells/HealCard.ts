@@ -17,24 +17,6 @@ export class HealCard extends SpellCard {
     this.healSprite = this.game.add.sprite(0, 0, 'heal-anim').setVisible(false)
   }
 
-  public windUp(): void {
-    if (this.wizardRef) {
-      // TODO: Replace this with an actual fireball charging animation
-      const text = this.game.add.text(
-        this.wizardRef.sprite.x,
-        this.wizardRef.sprite.y - 20,
-        'Charging heal...',
-        {
-          fontSize: '12px',
-          color: 'white',
-        }
-      )
-      this.game.time.delayedCall(this.windUpDurationSec * 1000, () => {
-        text.destroy()
-      })
-    }
-  }
-
   public execute() {
     if (this.wizardRef) {
       this.healSprite

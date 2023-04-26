@@ -20,8 +20,9 @@ export class IgnitedStatus extends Status {
       .setVisible(false)
   }
 
-  public reactToIncomingStatus(incomingStatus: Status): void {}
+  public reactToIncomingStatus(incomingStatusType: StatusTypes): void {}
   public clear(): void {
+    console.log('Clear ignited')
     this.monster.sprite.clearTint()
     this.damageOverTimeEvent.paused = true
     this.damageOverTimeEvent.destroy()
@@ -32,6 +33,7 @@ export class IgnitedStatus extends Status {
     super.clear()
   }
   public start(): void {
+    console.log('Ignited!')
     this.damageOverTimeEvent = Game.instance.time.addEvent({
       delay: 500,
       repeat: -1,

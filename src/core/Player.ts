@@ -44,10 +44,11 @@ export class Player {
       y: Constants.WINDOW_HEIGHT - 35,
       width: 175,
       height: 50,
-      text: 'Start Sequences',
+      text: 'Start',
       onClick: () => {
         this.startSequences()
       },
+      fontSize: 20,
       scene: this.game,
       backgroundColor: 0x222222,
       textColor: 'white',
@@ -60,10 +61,11 @@ export class Player {
       y: Constants.WINDOW_HEIGHT - 90,
       width: 175,
       height: 50,
-      text: 'Reset Sequence',
+      text: 'Reset',
       onClick: () => {
         this.resetSequences()
       },
+      fontSize: 20,
       scene: this.game,
       backgroundColor: 0x222222,
       textColor: 'white',
@@ -129,10 +131,35 @@ export class Player {
     })
   }
 
-  drawCards(numCardsToDraw: number = Player.NUM_CARDS_TO_DRAW) {
-    const distanceBetweenCards = Math.min(110, 521 / (this.currentHand.length + numCardsToDraw))
-    let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * numCardsToDraw) / 2
+  getTotalWidthOfCardsInHand(numCards: number, distBetweenCards: number) {
+    let spellCardWidth = SpellCard.SPELL_CARD_WIDTH
+    let additionalWidth = 0
+    let doesOverlap = false
 
+    if (distBetweenCards < SpellCard.SPELL_CARD_WIDTH) {
+      spellCardWidth = SpellCard.SPELL_CARD_WIDTH - (SpellCard.SPELL_CARD_WIDTH - distBetweenCards)
+      additionalWidth = SpellCard.SPELL_CARD_WIDTH - distBetweenCards
+      doesOverlap = true
+    }
+    let totalWidth = 0
+    if (doesOverlap) {
+      totalWidth = numCards * spellCardWidth + additionalWidth
+    } else {
+      totalWidth =
+        numCards * spellCardWidth +
+        (numCards - 1) * (distBetweenCards - SpellCard.SPELL_CARD_WIDTH) +
+        6
+    }
+    return totalWidth
+  }
+
+  drawCards(numCardsToDraw: number = Player.NUM_CARDS_TO_DRAW) {
+    console.log('Drawing cards...')
+
+    const totalCards = this.currentHand.length + numCardsToDraw
+    const distanceBetweenCards = Math.min(110, 521 / totalCards)
+    const totalWidth = this.getTotalWidthOfCardsInHand(totalCards, distanceBetweenCards)
+    let startX = Constants.MAP_WIDTH / 2 - totalWidth / 2
     const randomCardTypes = SpellTypes
     for (let i = 0; i < numCardsToDraw; i++) {
       const SpellCardClass = randomCardTypes[Phaser.Math.Between(0, randomCardTypes.length - 1)]
@@ -192,9 +219,10 @@ export class Player {
 
   updateCardsInHand() {
     const unplayedCards = this.currentHand.filter((card) => !card.wasPlayed)
-    const distanceBetweenCards = Math.min(110, 521 / unplayedCards.length)
-
-    let startX = Constants.MAP_WIDTH / 2 - (SpellCard.SPELL_CARD_WIDTH * unplayedCards.length) / 2
+    const numTotalCards = unplayedCards.length
+    const distanceBetweenCards = Math.min(110, 521 / numTotalCards)
+    const totalWidth = this.getTotalWidthOfCardsInHand(numTotalCards, distanceBetweenCards)
+    let startX = Constants.MAP_WIDTH / 2 - totalWidth / 2
     for (let i = 0; i < unplayedCards.length; i++) {
       const spellCard = unplayedCards[i]
       spellCard.spellCardRect.setVisible(true)

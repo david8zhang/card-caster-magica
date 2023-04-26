@@ -55,7 +55,6 @@ export class PoisonGasCard extends SpellCard {
         .setVisible(true)
       this.poisonGasSprite.play('poison-gas-anim', true)
       this.poisonGasSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (params) => {
-        console.log('Completed poison gas!')
         this.game.monster.takeDamage(PoisonGasCard.DAMAGE)
         this.game.monster.applyStatusEffects(StatusTypes.POISONED)
         this.game.tweens.add({

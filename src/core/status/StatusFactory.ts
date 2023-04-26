@@ -9,13 +9,14 @@ import { WetStatus } from './WetStatus'
 
 export class StatusFactory {
   private monster: Monster
-  public statusMapping: {
+  public static statusMappingClasses: {
     [key in StatusTypes]: Status
   }
 
   constructor(monster: Monster) {
     this.monster = monster
-    this.statusMapping = {
+
+    StatusFactory.statusMappingClasses = {
       [StatusTypes.WET]: new WetStatus(this.monster),
       [StatusTypes.NONE]: new NoneStatus(this.monster),
       [StatusTypes.CHILLED]: new ChilledStatus(this.monster),

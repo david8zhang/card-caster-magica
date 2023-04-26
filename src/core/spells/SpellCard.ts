@@ -3,6 +3,7 @@ import { Wizard } from '../Wizard'
 import { SpellTimeline } from '../SpellTimeline'
 import { Status, StatusTypes } from '../status/Status'
 import { Constants } from '~/utils/Constants'
+import { StatusFactory } from '../status/StatusFactory'
 
 export interface SpellCardConfig {
   name: string
@@ -42,6 +43,7 @@ export abstract class SpellCard {
   public descriptionText!: Phaser.GameObjects.Text
 
   public imageSrc: string
+  public chargingSprite: Phaser.GameObjects.Sprite
 
   public wasPlayed: boolean = false
   public wizardRef: Wizard | null = null
@@ -63,6 +65,7 @@ export abstract class SpellCard {
     }
     this.setupTimelineRect()
     this.setupCardRect()
+    this.chargingSprite = this.game.add.sprite(0, 0, '').setVisible(false)
   }
 
   public setupTimelineRect() {
@@ -86,7 +89,7 @@ export abstract class SpellCard {
       .setVisible(false)
 
     if (this.statusEffect) {
-      const statusEffectObj = this.game.statusFactory.statusMapping[this.statusEffect] as Status
+      const statusEffectObj = StatusFactory.statusMappingClasses[this.statusEffect]
       const statusEffectRectWidth =
         (statusEffectObj.duration / 1000) * (SpellTimeline.SPELL_TIMELINE_WIDTH / 10)
       this.spellTimelineStatusEffectRect = this.game.add
@@ -129,6 +132,7 @@ export abstract class SpellCard {
       .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, 0xffffff)
       .setStrokeStyle(6, this.cardColor)
       .setVisible(false)
+      .setOrigin(0, 0.5)
     this.spellCardRect = this.game.add
       .rectangle(0, 0, SpellCard.SPELL_CARD_WIDTH, SpellCard.SPELL_CARD_HEIGHT, this.cardColor)
       .setAlpha(0.8)
@@ -140,9 +144,13 @@ export abstract class SpellCard {
       .on(Phaser.Input.Events.POINTER_OUT, () => {
         this.unHoverCard()
       })
+      .setOrigin(0, 0.5)
 
-    this.spellBorder = this.game.add.rectangle(0, 0, 79, 79, 0x000000).setVisible(false)
-    this.spellImage = this.game.add.image(0, 0, this.imageSrc).setVisible(false)
+    this.spellBorder = this.game.add
+      .rectangle(0, 0, 79, 79, 0x000000)
+      .setVisible(false)
+      .setOrigin(0, 0.5)
+    this.spellImage = this.game.add.image(0, 0, this.imageSrc).setVisible(false).setOrigin(0, 0.5)
     this.spellCardRect.setData('ref', this)
   }
 
@@ -153,27 +161,21 @@ export abstract class SpellCard {
     this.showSpellCard()
     this.spellCardBg.setPosition(x, y)
     this.spellCardRect.setPosition(x, y)
-    this.spellImage.setPosition(x, y - 28)
-    this.spellBorder.setPosition(this.spellImage.x, this.spellImage.y)
+    this.spellImage.setPosition(x + 9, y - 28)
+    this.spellBorder.setPosition(this.spellImage.x - 1, this.spellImage.y)
   }
 
   public onPlay() {
-    this.spellCardRect.setVisible(false)
+    this.hideSpellCard()
     this.wasPlayed = true
   }
 
   public hoverCard() {
-    this.spellCardBg.setStrokeStyle(6, 0xffff00).setDepth(Constants.SORT_LAYERS.UI)
-    this.spellCardRect.setDepth(Constants.SORT_LAYERS.UI)
-    this.spellImage.setDepth(Constants.SORT_LAYERS.UI)
-    this.spellBorder.setDepth(Constants.SORT_LAYERS.UI)
+    this.spellCardBg.setStrokeStyle(6, 0xffff00)
   }
 
   public unHoverCard() {
-    this.spellCardBg.setStrokeStyle(6, this.cardColor).setDepth(Constants.SORT_LAYERS.SPELL)
-    this.spellCardRect.setDepth(Constants.SORT_LAYERS.SPELL)
-    this.spellImage.setDepth(Constants.SORT_LAYERS.SPELL)
-    this.spellBorder.setDepth(Constants.SORT_LAYERS.SPELL)
+    this.spellCardBg.setStrokeStyle(6, this.cardColor)
   }
 
   public handleDrag(dragX: number, dragY: number) {
@@ -194,6 +196,10 @@ export abstract class SpellCard {
       this.showSpellCard()
     }
     this.spellTimelineToDropOn = newSpellTimeline
+  }
+
+  get spellTimelineDisplayWidth() {
+    return this.spellTimelineWindUpRect.displayWidth + this.spellTimelineExecutionRect.displayWidth
   }
 
   hideSpellCard() {
@@ -258,7 +264,30 @@ export abstract class SpellCard {
   }
 
   public windUp() {
-    return
+    if (this.wizardRef) {
+      this.chargingSprite
+        .setTexture(this.wizardRef.sprite.texture.key)
+        .setTintFill(this.cardColor)
+        .setAlpha(0)
+        .setPosition(this.wizardRef.sprite.x, this.wizardRef.sprite.y)
+        .setScale(3)
+
+      this.game.tweens.add({
+        targets: [this.chargingSprite],
+        duration: this.windUpDurationSec * 1000,
+        alpha: {
+          from: 0,
+          to: 1,
+        },
+        onStart: () => {
+          this.chargingSprite.setVisible(true)
+        },
+        onComplete: () => {
+          this.chargingSprite.setVisible(false)
+        },
+      })
+      return
+    }
   }
 
   public execute() {

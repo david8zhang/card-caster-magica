@@ -1,7 +1,10 @@
 import Game from '~/scenes/Game'
 import { UIValueBar } from '~/ui/UIValueBar'
 import { Constants } from '~/utils/Constants'
-import { StatusTypes } from './status/Status'
+import { Status, StatusTypes } from './status/Status'
+import { Wizard } from './Wizard'
+import { NoneStatus } from './status/NoneStatus'
+import { StatusFactory } from './status/StatusFactory'
 
 export interface MonsterConfig {
   texture: string
@@ -9,7 +12,7 @@ export interface MonsterConfig {
 }
 
 export class Monster {
-  public static MAX_HEALTH = 500
+  public static MAX_HEALTH = 400
   public static DAMAGE = 15
 
   private game: Game
@@ -17,8 +20,9 @@ export class Monster {
 
   public sprite: Phaser.Physics.Arcade.Sprite
   public currStatusType: StatusTypes = StatusTypes.NONE
-  public currStatusIndicatorCircle: Phaser.GameObjects.Arc
   public damageNumQueue: number[] = []
+
+  public attackSprites: Phaser.GameObjects.Sprite[] = []
 
   constructor(game: Game, config: MonsterConfig) {
     this.game = game
@@ -45,9 +49,40 @@ export class Monster {
       borderColor: 0x000000,
     })
     this.currStatusType = StatusTypes.NONE
-    this.currStatusIndicatorCircle = this.game.add
-      .circle(this.sprite.x + 25, this.sprite.y - 25, 5)
-      .setVisible(false)
+
+    this.setupAttackSprites()
+  }
+
+  setupAttackSprites() {
+    for (let i = 0; i < 2; i++) {
+      const newAttackSprite = this.game.add
+        .sprite(0, 0, 'swipe')
+        .setVisible(false)
+        .setScale(2)
+        .setDepth(Constants.SORT_LAYERS.UI)
+      newAttackSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        const wizard = newAttackSprite.getData('wizardRef')
+        if (wizard) {
+          wizard.takeDamage(Monster.DAMAGE)
+        }
+        this.game.tweens.add({
+          targets: [wizard.sprite],
+          x: '+=5',
+          yoyo: true,
+          duration: 50,
+          repeat: 3,
+        })
+        this.game.tweens.add({
+          targets: [newAttackSprite],
+          alpha: {
+            from: 1,
+            to: 0,
+          },
+          duration: 200,
+        })
+      })
+      this.attackSprites.push(newAttackSprite)
+    }
   }
 
   get currHealth() {
@@ -99,22 +134,35 @@ export class Monster {
       },
       duration: 500,
       onComplete: () => {
-        this.game.player.wizards.forEach((wizard) => {
-          wizard.takeDamage(Monster.DAMAGE)
+        this.game.player.wizards.forEach((wizard: Wizard, index: number) => {
+          const sprite = this.attackSprites[index]
+          if (!sprite.getData('wizardRef')) {
+            sprite.setData('wizardRef', wizard)
+          }
+          sprite
+            .setPosition(wizard.sprite.x + 75, wizard.sprite.y - 75)
+            .setVisible(true)
+            .setAlpha(1)
+          sprite.play('swipe')
         })
-        this.game.switchTurn()
+        this.game.time.delayedCall(200, () => {
+          this.game.switchTurn()
+        })
       },
     })
   }
 
   applyStatusEffects(incomingStatusType: StatusTypes) {
-    const incomingStatus = this.game.statusFactory.statusMapping[incomingStatusType]
-    this.currStatus.reactToIncomingStatus(incomingStatus)
+    this.currStatus.reactToIncomingStatus(incomingStatusType)
   }
 
   setMaxHealth(health: number) {
     this.healthBar.setMaxValue(health)
     this.healthBar.setCurrValue(health)
+  }
+
+  get currStatus() {
+    return StatusFactory.statusMappingClasses[this.currStatusType]
   }
 
   setCurrStatus(statusType: StatusTypes) {
@@ -123,13 +171,8 @@ export class Monster {
     this.currStatus.start()
   }
 
-  public get currStatus() {
-    return this.game.statusFactory.statusMapping[this.currStatusType]
-  }
-
   clearStatus() {
     this.currStatus.clear()
     this.currStatusType = StatusTypes.NONE
-    this.currStatusIndicatorCircle.setVisible(false)
   }
 }

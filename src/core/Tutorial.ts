@@ -244,43 +244,21 @@ export class Tutorial {
       textToShow: 'You can also combine status effects for some cool effects!',
     },
     {
-      textToShow: 'Try casting water blast, then overlap it with frost wind.',
+      textToShow: 'Try playing this attack where "Poison Gas" overlaps with "Fireball"',
       onStart: () => {
-        const spellCard1 = this.game.player.drawCardForTutorial('WaterBlast')
-        spellCard1.spellCardRect.setInteractive({ draggable: true })
-        const spellCard2 = this.game.player.drawCardForTutorial('FrostWind')
-        spellCard2.spellCardRect.setInteractive({ draggable: true })
+        const waterSpell = this.game.player.drawCardForTutorial('WaterBlast')
+        const frostWind = this.game.player.drawCardForTutorial('FrostWind')
 
-        const validateSpellCardOrder = () => {
-          const spellTimeline = this.game.player.spellTimelines[0]
-          const keys = Object.keys(spellTimeline.spellSequenceMapping)
-          const timeBetweenSpells = Math.abs(parseInt(keys[0]) - parseInt(keys[1]))
-          return timeBetweenSpells <= 3
-        }
+        const spellTimeline = this.game.player.spellTimelines[0]
+        waterSpell.setCardPosition(spellTimeline.rectangle.x, spellTimeline.rectangle.y)
+        this.game.player.playCard(spellTimeline, waterSpell)
 
-        spellCard1.dragEndCallbacks.push(() => {
-          if (spellCard2.wasPlayed) {
-            if (validateSpellCardOrder()) {
-              this.showNextStep()
-            } else {
-              this.game.player.resetSequences()
-            }
-          }
-        })
-        spellCard2.dragEndCallbacks.push(() => {
-          if (spellCard1.wasPlayed) {
-            if (validateSpellCardOrder()) {
-              this.showNextStep()
-            } else {
-              this.game.player.resetSequences()
-            }
-          }
-        })
-      },
-    },
-    {
-      textToShow: 'Now try playing the attack!',
-      onStart: () => {
+        frostWind.setCardPosition(
+          spellTimeline.rectangle.x + spellTimeline.rectangle.displayWidth / 2,
+          spellTimeline.rectangle.y
+        )
+        this.game.player.playCard(spellTimeline, frostWind)
+
         this.game.player.startSequenceButton.setVisible(true)
         this.nextButton.setVisible(false)
       },
@@ -294,12 +272,38 @@ export class Tutorial {
       },
     },
     {
+      textToShow: 'Some status effect combos cancel each other out though, so watch out!',
+      onStart: () => {
+        const waterSpell = this.game.player.drawCardForTutorial('WaterBlast')
+        const fireSpell = this.game.player.drawCardForTutorial('Fireball')
+        const spellTimeline = this.game.player.spellTimelines[0]
+        fireSpell.setCardPosition(spellTimeline.rectangle.x, spellTimeline.rectangle.y)
+        this.game.player.playCard(spellTimeline, fireSpell)
+
+        waterSpell.setCardPosition(
+          spellTimeline.rectangle.x + spellTimeline.rectangle.displayWidth / 2,
+          spellTimeline.rectangle.y
+        )
+        this.game.player.playCard(spellTimeline, waterSpell)
+        this.game.player.startSequencesTutorial(() => {
+          if (!this.didCallSequenceCompleteCb) {
+            this.didCallSequenceCompleteCb = true
+            this.showNextStep()
+          }
+        })
+      },
+    },
+    {
       textToShow:
         'Now you know the basics! Try combo-ing together multiple spells to defeat the monster! (Use the reset button to redo spells)',
       textStyle: {
         fontSize: '16px',
       },
       onStart: () => {
+        const spellTimeline = this.game.player.spellTimelines[0]
+        spellTimeline.clear()
+
+        this.didCallSequenceCompleteCb = false
         const wizard2 = this.game.player.wizards[1]
         wizard2.setVisible(true)
         const timeline2 = this.game.player.spellTimelines[1]

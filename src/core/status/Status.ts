@@ -33,8 +33,8 @@ export abstract class Status {
     }
   }
 
-  public reactToIncomingStatus(incomingStatus: Status) {
-    this.monster.setCurrStatus(incomingStatus.statusType)
+  public reactToIncomingStatus(incomingStatusType: StatusTypes) {
+    this.monster.setCurrStatus(incomingStatusType)
   }
   public clear(): void {
     this.expirationEvent.paused = true
@@ -42,7 +42,8 @@ export abstract class Status {
     return
   }
   public start(): void {
-    this.expirationEvent = Game.instance.time.delayedCall(this.duration, () => {
+    this.expirationEvent = Game.instance.time.delayedCall(this.duration - 50, () => {
+      console.log('Expired event')
       this.monster.clearStatus()
     })
     return

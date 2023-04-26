@@ -9,6 +9,7 @@ export interface ButtonConfig {
   backgroundColor: number
   textColor: string
   fontSize?: number
+  fontFamily?: string
 }
 
 export class Button {
@@ -23,10 +24,14 @@ export class Button {
       .rectangle(config.x, config.y, config.width, config.height, 0xffffff)
       .setAlpha(0.85)
       .setFillStyle(config.backgroundColor)
-    this.text = this.scene.add.text(config.x, config.y, config.text, {
+    const textStyle: any = {
       fontSize: `${config.fontSize ? config.fontSize : 10}px`,
       color: config.textColor,
-    })
+    }
+    if (config.fontFamily) {
+      textStyle.fontFamily = config.fontFamily
+    }
+    this.text = this.scene.add.text(config.x, config.y, config.text, textStyle)
     this.text.setPosition(
       this.text.x - this.text.displayWidth / 2,
       this.text.y - this.text.displayHeight / 2

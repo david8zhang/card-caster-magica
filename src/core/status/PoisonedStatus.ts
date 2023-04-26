@@ -5,7 +5,7 @@ import Game from '~/scenes/Game'
 
 export class PoisonedStatus extends Status {
   private damageOverTimeEvent!: Phaser.Time.TimerEvent
-  public static POISON_DMG_OVER_TIME = 1
+  public static POISON_DMG_OVER_TIME = 2
   public poisonedSprite: Phaser.GameObjects.Sprite
   public poisonedTween: Phaser.Tweens.Tween | null = null
   public explosionSprite: Phaser.GameObjects.Sprite
@@ -14,7 +14,7 @@ export class PoisonedStatus extends Status {
     super({
       monster,
       statusType: StatusTypes.POISONED,
-      duration: 2000,
+      duration: 3000,
       iconColor: 0x0bda51,
     })
     this.poisonedSprite = Game.instance.add
@@ -26,9 +26,9 @@ export class PoisonedStatus extends Status {
       .setScale(5)
   }
 
-  public reactToIncomingStatus(incomingStatus: Status): void {
+  public reactToIncomingStatus(incomingStatusType: StatusTypes): void {
     // Explosion if ignited while already poisoned (but not the other way around)
-    if (incomingStatus.statusType === StatusTypes.IGNITED) {
+    if (incomingStatusType === StatusTypes.IGNITED) {
       Game.instance.shakeAfterReaction()
       this.explosionSprite.setVisible(true).setAlpha(1)
       this.explosionSprite.play('explosion')
@@ -48,11 +48,11 @@ export class PoisonedStatus extends Status {
     }
 
     // Poison is negated by water
-    if (incomingStatus.statusType === StatusTypes.WET) {
+    if (incomingStatusType === StatusTypes.WET) {
       this.monster.clearStatus()
       return
     }
-    super.reactToIncomingStatus(incomingStatus)
+    super.reactToIncomingStatus(incomingStatusType)
   }
   public clear(): void {
     this.damageOverTimeEvent.paused = true

@@ -18,18 +18,18 @@ export class WetStatus extends Status {
       .setVisible(false)
   }
 
-  public reactToIncomingStatus(incomingStatus: Status): void {
+  public reactToIncomingStatus(incomingStatusType: StatusTypes): void {
     // Ignition will be negated if the monster is wet
-    if (incomingStatus.statusType == StatusTypes.IGNITED) {
+    if (incomingStatusType == StatusTypes.IGNITED) {
       this.monster.clearStatus()
       return
     }
     // wet -> chill or chill -> wet = frozen status
-    if (incomingStatus.statusType === StatusTypes.CHILLED) {
+    if (incomingStatusType === StatusTypes.CHILLED) {
       this.monster.setCurrStatus(StatusTypes.FROZEN)
       return
     }
-    this.monster.setCurrStatus(incomingStatus.statusType)
+    this.monster.setCurrStatus(incomingStatusType)
   }
 
   public clear() {

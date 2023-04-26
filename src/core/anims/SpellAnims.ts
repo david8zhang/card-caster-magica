@@ -78,4 +78,14 @@ export const createSpellAnims = (anims: Phaser.Animations.AnimationManager) => {
     }),
     frameRate: 12,
   })
+
+  anims.create({
+    key: 'swipe',
+    frames: anims.generateFrameNames('swipe', {
+      start: 0,
+      end: 3,
+      suffix: '.png',
+    }),
+    frameRate: 10,
+  })
 }

@@ -18,19 +18,19 @@ export class ChilledStatus extends Status {
       .setVisible(false)
   }
 
-  public reactToIncomingStatus(incomingStatus: Status): void {
+  public reactToIncomingStatus(incomingStatusType: StatusTypes): void {
     // If wet -> chilled or chilled -> wet, monster gets frozen
-    if (incomingStatus.statusType === StatusTypes.WET) {
+    if (incomingStatusType === StatusTypes.WET) {
       this.monster.setCurrStatus(StatusTypes.FROZEN)
       return
     }
 
     // If monster is chilled, ignition will just be negated
-    if (incomingStatus.statusType === StatusTypes.IGNITED) {
+    if (incomingStatusType === StatusTypes.IGNITED) {
       this.monster.clearStatus()
       return
     }
-    super.reactToIncomingStatus(incomingStatus)
+    super.reactToIncomingStatus(incomingStatusType)
   }
   public clear(): void {
     this.monster.sprite.clearTint()

@@ -8,29 +8,40 @@ export class MainMenu extends Scene {
   }
 
   create() {
+    const bgImage = this.add.image(
+      Constants.WINDOW_WIDTH / 2,
+      Constants.WINDOW_HEIGHT / 2,
+      'splash-art'
+    )
+
     const mainMenuText = this.add.text(
       Constants.WINDOW_WIDTH / 2,
-      Constants.WINDOW_HEIGHT / 3,
-      'Card Caster',
+      Constants.WINDOW_HEIGHT / 4,
+      'CARDCASTER',
       {
         fontSize: '75px',
         color: 'white',
+        fontFamily: 'Cambria',
       }
     )
+    mainMenuText.setStroke('#ed4774', 15)
+
     const mainMenuSubtitleText = this.add.text(
       Constants.WINDOW_WIDTH / 2,
       mainMenuText.y + mainMenuText.displayHeight,
       'Synchronize',
       {
-        fontSize: '75px',
+        fontSize: '200px',
         color: 'white',
+        fontFamily: 'Althea',
       }
     )
+    mainMenuSubtitleText.setStroke('#ed4774', 25)
 
     mainMenuText.setWordWrapWidth(Constants.WINDOW_WIDTH)
     mainMenuText.setPosition(
-      Constants.WINDOW_WIDTH / 2 - mainMenuText.displayWidth / 2,
-      Constants.WINDOW_HEIGHT / 3
+      Constants.WINDOW_WIDTH / 2 - mainMenuText.displayWidth / 2 + 200,
+      Constants.WINDOW_HEIGHT / 4 + 50
     )
 
     mainMenuSubtitleText.setPosition(

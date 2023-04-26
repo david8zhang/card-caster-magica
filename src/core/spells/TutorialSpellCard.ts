@@ -18,24 +18,6 @@ export class TutorialSpellCard extends SpellCard {
     this.fireballSprite = this.game.add.sprite(0, 0, 'fireball-anim').setVisible(false)
   }
 
-  public windUp() {
-    if (this.wizardRef) {
-      // TODO: Replace this with an actual fireball charging animation
-      const text = this.game.add.text(
-        this.wizardRef.sprite.x,
-        this.wizardRef.sprite.y - 20,
-        'Charging fireball...',
-        {
-          fontSize: '12px',
-          color: 'white',
-        }
-      )
-      this.game.time.delayedCall(this.windUpDurationSec * 1000, () => {
-        text.destroy()
-      })
-    }
-  }
-
   public execute() {
     if (this.wizardRef) {
       this.fireballSprite
