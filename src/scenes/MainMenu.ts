@@ -8,6 +8,7 @@ export class MainMenu extends Scene {
   }
 
   create() {
+    this.sound.pauseOnBlur = false
     this.sound.play('bgm', {
       loop: true,
       volume: 0.4,

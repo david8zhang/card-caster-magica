@@ -28,7 +28,9 @@ export class FrozenStatus extends Status {
 
   shatter() {
     Game.instance.shakeAfterReaction()
-    Game.instance.sound.play('shatter')
+    Game.instance.sound.play('shatter', {
+      volume: 0.5,
+    })
     this.frozenSprite.play('frozen-shatter', true)
     this.frozenSprite.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.clear()

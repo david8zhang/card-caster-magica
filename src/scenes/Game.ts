@@ -38,6 +38,7 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    this.sound.pauseOnBlur = false
     this.sound.stopAll()
     this.sound.play('battle', {
       volume: 0.4,
